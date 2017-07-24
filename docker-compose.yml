@@ -1,6 +1,8 @@
-version: '2'
+version: '2.2'
 services:
   stabbot:
     build: .
     volumes:
      - ./data:/bot/data
+    cpu_count: 1
+    mem_limit: 3G
