@@ -181,6 +181,11 @@ def search_and_download_video(submission):
             # return first first embedded video if there is any
             return download_file(extract_video_url_from_page(submission_url))
 
+        vid_src = extract_video_url_from_page(submission_url)
+        if vid_src is not None:
+            #this is probably a mobile link to a gifv
+            return download_file(vid_src)
+
         # this is link to an image, but probabldy no direct link
         img_id = os.path.basename(parsed_uri.path)
         image = imgur.get_image(img_id)
@@ -292,7 +297,7 @@ def main():
             mention = get_next_job(posts_replied_to)
             if mention is None:
                 if debug:
-                    print "No Mention found. sleeping for " + str(sleep_time_s) + " seconds ..."
+                    print "No Mention found. Going back to sleep ..."
                 time.sleep(sleep_time_s)
                 continue
             mark_submission(mention.submission.id, posts_replied_to)
