@@ -242,7 +242,7 @@ def generate_reply(uploaded_url, conversion_time):
              "I have stabilized the video for you: " + uploaded_url + "\n\n" \
              "It took me " +  str(round(conversion_time))+ " seconds to process." \
              "\n\n ___ \n\n ^^If ^^you ^^want ^^to ^^know ^^how ^^to ^^summon ^^me: " \
-             "[^^click ^^here](https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/). "
+             "[^^click ^^here](https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. "
 
 
 def clear_env():
