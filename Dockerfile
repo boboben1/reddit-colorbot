@@ -106,6 +106,8 @@ RUN pip install -r requirements.txt
 COPY praw.ini /bot
 COPY bot.py /bot
 COPY secret.py /bot
+COPY scrapeVid.py /bot
+COPY stabVid.py /bot
 
 ENV PYTHONUNBUFFERED 0
 CMD ["python", "bot.py"]
