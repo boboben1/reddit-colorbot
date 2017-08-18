@@ -88,10 +88,9 @@ def get_replied_to_list():
 
 
 def get_next_job(posts_replied_to):
-    allMentions = list(reddit.inbox.mentions(limit=50))
-    sorted_mentions= sorted(allMentions, key=lambda m: (m.score, m.submission.score))
-
-    for mention in sorted_mentions:
+    #allMentions = list(reddit.inbox.mentions(limit=50))
+    #sorted_mentions= sorted(allMentions, key=lambda m: (m.score, m.submission.score))
+    for mention in reddit.inbox.mentions(limit=50):
         if not mention.new and not include_old_mentions:
             continue
         mention.mark_read()
@@ -119,6 +118,8 @@ def main():
                 time.sleep(sleep_time_s)
                 continue
             mark_submission(mention.submission.id, posts_replied_to)
+            if debug:
+                print "submission: " + mention._submission.shortlink
             start_time = time.time()
 
             input_path = search_and_download_video(mention.submission)
@@ -159,9 +160,9 @@ gfyclient = GfycatClient()
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
 gfylinks_path = os.path.abspath("data/gfylinks.txt")
 
-dryrun = True
-debug = True
-include_old_mentions = True
+dryrun = False
+debug = False
+include_old_mentions = False
 woring_path = os.path.abspath("data/working")
 
 sleep_time_s = 10
