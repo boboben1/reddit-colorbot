@@ -6,6 +6,7 @@ import traceback
 import shutil
 import time
 import re
+import hashlib
 
 
 # ####################### #
@@ -47,12 +48,29 @@ def upload_file(locale_file_name):
     print "uploading..."
     if dryrun:
         return "https://gfycat.com/FamiliarSimplisticAegeancat"
-    uploaded_file_info = gfyclient.upload_from_file(locale_file_name)
-    file_path =  uploaded_file_info['mp4Url'] if 'mp4Url' in uploaded_file_info else  "https://gfycat.com/" + uploaded_file_info['gfyname']
-    with open(gfylinks_path, "a") as f:
-        f.write(file_path + "\n")
 
-    return file_path
+    for uplodad_it in range(0, 3):
+        uploaded_file_info = gfyclient.upload_from_file(locale_file_name)
+        local_md5 = hashlib.md5(open(locale_file_name, 'rb').read()).hexdigest()
+        gfyclient.query_gfy(uploaded_file_info['gfyName'])
+        for query_it in range(0,3):
+            queried_file_info = gfyclient.query_gfy(uploaded_file_info['gfyName'])['gfyItem']
+            if 'md5' not in queried_file_info:
+                print("md5 is not yet ready. So pause and try again")
+                time.sleep(5)
+                continue
+
+            if local_md5 != queried_file_info['md5']:
+                print "hash mismatch. local_md5: " + local_md5 + "  remote_md5: " + queried_file_info['md5']
+                print "uploading again..."
+                break
+
+            file_path =  queried_file_info['mp4Url']
+            with open(gfylinks_path, "a") as f:
+                f.write(file_path + "\n")
+
+            return file_path
+    raise RuntimeError("could not upload file")
 
 
 def generate_reply(uploaded_url, conversion_time):
