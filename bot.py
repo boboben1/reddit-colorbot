@@ -50,22 +50,21 @@ def upload_file(locale_file_name):
         return "https://gfycat.com/FamiliarSimplisticAegeancat"
 
     for uplodad_it in range(0, 3):
-        uploaded_file_info = gfyclient.upload_from_file(locale_file_name)
+        file_info = gfyclient.upload_from_file(locale_file_name)
         local_md5 = hashlib.md5(open(locale_file_name, 'rb').read()).hexdigest()
-        gfyclient.query_gfy(uploaded_file_info['gfyName'])
         for query_it in range(0,3):
-            queried_file_info = gfyclient.query_gfy(uploaded_file_info['gfyName'])['gfyItem']
-            if 'md5' not in queried_file_info:
+            if 'md5' not in file_info:
                 print("md5 is not yet ready. So pause and try again")
-                time.sleep(5)
+                time.sleep(10)
+                file_info = gfyclient.query_gfy(file_info['gfyName'])['gfyItem']
                 continue
 
-            if local_md5 != queried_file_info['md5']:
-                print "hash mismatch. local_md5: " + local_md5 + "  remote_md5: " + queried_file_info['md5']
+            if local_md5 != file_info['md5']:
+                print "hash mismatch. local_md5: " + local_md5 + "  remote_md5: " + file_info['md5']
                 print "uploading again..."
                 break
 
-            file_path =  queried_file_info['mp4Url']
+            file_path =  file_info['mp4Url']
             with open(gfylinks_path, "a") as f:
                 f.write(file_path + "\n")
 
