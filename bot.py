@@ -50,21 +50,31 @@ def upload_file(locale_file_name):
         return "https://gfycat.com/FamiliarSimplisticAegeancat"
 
     for uplodad_it in range(0, 3):
-        file_info = gfyclient.upload_from_file(locale_file_name)
+        try:
+            file_info = gfyclient.upload_from_file(locale_file_name)
+        except Exception as e:
+            print "Exception:"
+            print e.__class__, e.__doc__, e.message
+            print e
+            traceback.print_exc()
+            time.sleep(gfycat_retry_sleep_s)
+            continue
+
         local_md5 = hashlib.md5(open(locale_file_name, 'rb').read()).hexdigest()
-        for query_it in range(0,3):
+        for query_it in range(0, 3):
             if 'md5' not in file_info:
                 print("md5 is not yet ready. So pause and try again")
-                time.sleep(10)
+                time.sleep(gfycat_retry_sleep_s)
                 file_info = gfyclient.query_gfy(file_info['gfyName'])['gfyItem']
                 continue
 
             if local_md5 != file_info['md5']:
                 print "hash mismatch. local_md5: " + local_md5 + "  remote_md5: " + file_info['md5']
                 print "uploading again..."
+                time.sleep(gfycat_retry_sleep_s)
                 break
 
-            file_path =  file_info['mp4Url']
+            file_path = file_info['mp4Url']
             with open(gfylinks_path, "a") as f:
                 f.write(file_path + "\n")
 
@@ -74,10 +84,11 @@ def upload_file(locale_file_name):
 
 def generate_reply(uploaded_url, conversion_time):
     return ""\
-             "I have stabilized the video for you: " + uploaded_url + "\n\n" \
-             "It took me " +  str(round(conversion_time))+ " seconds to process." \
-             "\n\n ___ \n\n ^^If ^^you ^^want ^^to ^^know ^^how ^^to ^^summon ^^me: " \
-             "[^^click ^^here](https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. "
+     "I have stabilized the video for you: " + uploaded_url + "\n\n" \
+     "It took me " + str(round(conversion_time)) + " seconds to process." \
+     "\n\n ___ \n\n ^^If ^^you ^^want ^^to ^^know ^^how ^^to ^^summon ^^me: " \
+     "[^^click ^^here](https://www.reddit.com/r/botwatch/" \
+     "comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. "
 
 
 def clear_env():
@@ -87,11 +98,12 @@ def clear_env():
     os.chdir(woring_path)
 
 
-def mark_submission(id,posts_replied_to):
-    print "marking submission " + id + " ... "
-    posts_replied_to.append(id)
+def mark_submission(post_id, posts_replied_to):
+    if debug:
+        print "marking submission " + post_id + " ... "
+    posts_replied_to.append(post_id)
     with open(posts_replied_to_path, "a") as f:
-        f.write(id + "\n")
+        f.write(post_id + "\n")
 
 
 def get_replied_to_list():
@@ -105,8 +117,6 @@ def get_replied_to_list():
 
 
 def get_next_job(posts_replied_to):
-    #allMentions = list(reddit.inbox.mentions(limit=50))
-    #sorted_mentions= sorted(allMentions, key=lambda m: (m.score, m.submission.score))
     for mention in reddit.inbox.mentions(limit=50):
         if not mention.new and not include_old_mentions:
             continue
@@ -135,8 +145,7 @@ def main():
                 time.sleep(sleep_time_s)
                 continue
             mark_submission(mention.submission.id, posts_replied_to)
-            if debug:
-                print "submission: " + mention._submission.shortlink
+            print "submission: " + mention.submission.id + " - " + mention.submission.shortlink
             start_time = time.time()
 
             input_path = search_and_download_video(mention.submission)
@@ -160,18 +169,15 @@ def main():
                 print e
                 traceback.print_exc()
 
-        print 'sleeping for ' + str(sleep_time_s) + ' seconds ...'
-        time.sleep(sleep_time_s)
-
 
 # ####################### #
 # ## global constants ### #
 # ####################### #
 
 reddit = praw.Reddit('my_bot',
-    client_id = secret.reddit_client_id,
-    client_secret = secret.reddit_client_secret,
-    password = secret.reddit_password)
+                     client_id=secret.reddit_client_id,
+                     client_secret=secret.reddit_client_secret,
+                     password=secret.reddit_password)
 gfyclient = GfycatClient()
 
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
@@ -183,6 +189,7 @@ include_old_mentions = False
 woring_path = os.path.abspath("data/working")
 
 sleep_time_s = 10
+gfycat_retry_sleep_s = 15
 
 # ####################### #
 # ## excecution ######### #

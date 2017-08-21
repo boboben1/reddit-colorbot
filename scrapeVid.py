@@ -6,6 +6,9 @@ from pytube import YouTube
 import os
 import pyimgur
 import secret
+from stabVid import VideoBrokenException, max_video_length_seconds
+
+# todo: turn this module into a proper class
 
 
 imgur = pyimgur.Imgur(secret.imgur_id)
@@ -43,13 +46,12 @@ def extract_video_url_from_page(page_url):
             print "Warning: No Video type: "
         if not video_type.startswith("video"):
             raise VideoNotFoundException("Found File has wrong type. Found:"
-                                         +video_type + ", Expected: video" )
+                                         + video_type + ", Expected: video")
         return video_src
     return None
 
 
 def search_and_download_video(submission):
-    print "getting video url..."
 
     submission_url = submission.url
     parsed_uri = urlparse.urlparse(submission_url)
@@ -93,7 +95,7 @@ def search_and_download_video(submission):
 
         vid_src = extract_video_url_from_page(submission_url)
         if vid_src is not None:
-            #this is probably a mobile link to a gifv
+            # this is probably a mobile link to a gifv
             return download_file(vid_src)
 
         # this is link to an image, but probabldy no direct link
@@ -112,4 +114,3 @@ def download_file(video_src):
     target_path = "input" + ext
     test.retrieve(video_src, target_path)
     return target_path
-

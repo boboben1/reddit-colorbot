@@ -2,6 +2,7 @@
 import subprocess
 from ffprobe import FFProbe
 
+# todo: turn this module into a proper class
 
 # ####################### #
 # ## global constants ### #
