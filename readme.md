@@ -37,7 +37,7 @@ The result of the first pass is a file containing frame-to-frame transformations
 **second pass**:
 Just applying the transformations would result in the video moving out of view eventually,
 so the stabilized camera needs to follow the original camera. If it follows
-too fast, the result will be too shaky. If it follows to slow the result will
+too fast, the result will be too shaky. If it follows too slow the result will
 be out of view for too long.
 
 So the bot averages the transformation of the last 20 frames and the next 20 frames.
@@ -50,14 +50,14 @@ and smooth camera movements.
 but cropping too much would remove too much of the video in some cases, so
 I decided against it. A positive side effect: by seeing how much the
 result jumps around, you get a better feeling of how shaky the original really
-was.A prime example of
+was. A example of
 this can be found [here](https://www.reddit.com/r/nonononoyes/comments/6vb4vb/motorcycle_takes_a_rocky_ride/dlyydcl/).
 
 **It's way shakier then before**: The points where the frame is stabilized on, are
-choosen almost randomly. So sometimes it chooses points, that are not
+choosen almost randomly (actually it's dependant on the contrast, the area and some other factors). So sometimes it chooses points, that are not
 part of the background, but part of the foreground. And then it switches between
 stabilizing on the foreground and stabilizing on the background, resulting in
-a shakier result than the original video. The happens especially if moving objekts
+a shakier result than the original video. This happens especially if moving objekts
 are a big part of the video, and if they are very well structured. A prime example of
 this can be found [here](https://www.reddit.com/r/Simulated/comments/6va1j9/voxelized_explosion/dlz5zmi/).
 
