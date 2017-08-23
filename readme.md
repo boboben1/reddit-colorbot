@@ -1,7 +1,8 @@
-
 # stabbot
 
 a reddit bot, that stabilizes videos
+
+**account on reddit:**: https://www.reddit.com/user/stabbot
 
 **Ranking**: https://goodbot-badbot.herokuapp.com/all_filter
 
