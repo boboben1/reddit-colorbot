@@ -1,114 +1,104 @@
 
-# stabot - the video-stabilising rebot
+# stabbot
 
-reddit bot, der Bild stabilisiert
+a reddit bot, that stabilizes videos
 
-# dev
+**Ranking**: https://goodbot-badbot.herokuapp.com/all_filter
 
+**Introduction**: https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/
 
-### Entwicklungsablauf:
+# User information
 
-- [x] install docker
-- [x] create container, that compiles ffmpeg has python and stuff stalled
-- [ ] create py-module, that checks and stabilizes vid
-- [ ] create python script, that does all the rest, except posting to ddit
-- [ ] create account for bot
-- [ ] get karma for bot
-- [ ] test live-version locally
-- [ ] upload live-version to vserver
+## how does it work?
 
-### Programmablauf
+### summoning
 
-1. Scan subs --> todo list of posts+vids
-1. choose vid to download and download it
-  1. prefer vids, that are new, trending, short and/or from well known subs (e.g. subs with more phone-videos) or vids with phone-aspect-ratio
-1. apply ffmpeg ''ffmpeg -i e9k3i5fbp2az.gif -vf deshake=edge='blank' out.gif''
-  1. shakiness als zahl:
-    1. ffmpeg -i input.mp4 -vf vidstabdetect=shakiness=10:accuracy=15 -f null -
-    1. if < 'X' then break
-  1. apply vectors to vid
-  1. convert to mp4
-1. upload to giffy
-1. make comment
+Mention /u/stabbot in a top-level comment to a submission.
 
-#### shakiness ermitteln
+The submission must be either:
+  * a direct link to a video file
+  * a html5 video
+  * a link to youtube, gfycat, imgur or reddit
 
-Wenn mehr als 10% der Frames um mehr els 10% der Bildiagonalen verschoben werden, dann muss das Video stabilisiert werden. 
+The video must be less than 60s
 
+### Stabilization
 
+**first pass**:
+First it looks for edges and corners in a frame (= "image in a video").
+Then it tries to find the same corners in the next frame. Then it tries
+to rotate and translate the 2nd frame, so the so corresponding corners overlap with the
+first frame. This transformation is saved in a separate file.
+The process is repeated for all consecutive frames.
 
-#### related links
-  * https://github.com/georgmartius/vid.stab#usage-instructions
-  * https://askubuntu.com/questions/405244/deshaking-videos-using-script/405557#405557
-  * https://www.reddit.com/r/botwatch/
-  * https://praw.readthedocs.io/en/latest/
-  * https://github.com/kkroening/ffmpeg-python
-  * https://mhaller.github.io/pyffmpeg/
-  * http://ffmpy.readthedocs.io/en/latest/
+The result of the first pass is a file containing frame-to-frame transformations.
 
+**second pass**:
+Just applying the transformations would result in the video moving out of view eventually,
+so the stabilized camera needs to follow the original camera. If it follows
+too fast, the result will be too shaky. If it follows to slow the result will
+be out of view for too long.
 
-## dockerfile ausführen
+So the bot averages the transformation of the last 20 frames and the next 20 frames.
+And this averaged transformation is then applied to frame, resulting in nice
+and smooth camera movements.
 
+### why it sometimes fails
 
-### bauen und testen
+**the black edges keep jumping around**: The could be solved by cropping the result,
+but cropping too much would remove too much of the video in some cases, so
+I decided against it. A positive side effect: by seeing how much the
+result jumps around, you get a better feeling of how shaky the original really
+was.A prime example of
+this can be found [here](https://www.reddit.com/r/nonononoyes/comments/6vb4vb/motorcycle_takes_a_rocky_ride/dlyydcl/).
 
-docker build -t c . ;and docker run -it -v (pwd)/test-data:/test c bash
-
-
-## ffmpeg usage
-
-Gut funktioniert:
-
-ffmpeg -i input.mp4 -vf vidstabdetect -f null -
-
-dann:
-
-ffmpeg -i input.mp4 -vf vidstabtransform=smoothing=20:crop=black:zoom="-15":optzoom=0 out_stabilized.mp4
-
-###### Erklärung für crop=black:zoom="-15":
-
-Zoom -15, damit man immer das ganze Bild sieht (--> für den User gehen keine Informationen verloren).
-
-Black, damit man leichter versteht, was stabilisierung gemacht hat. Bei mirror, wird man meiner Meinung nach eher verwirrt, weil man erstmal verstehen muss, was da am Rand passiert. Bei Black ist offensichtlich, was da passiert.
-
-Außerdem: Zoom + Schwarzer zusammen bewirkt, dass man immer sehr gut sehen kann, wie stark die Kamera gerade gewackelt hat. Meiner Meinung nach schwächt das noch weiter die Wackler ab, die am Ende noch im Video geblieben sind.
+**It's way shakier then before**: The points where the frame is stabilized on, are
+choosen almost randomly. So sometimes it chooses points, that are not
+part of the background, but part of the foreground. And then it switches between
+stabilizing on the foreground and stabilizing on the background, resulting in
+a shakier result than the original video. The happens especially if moving objekts
+are a big part of the video, and if they are very well structured. A prime example of
+this can be found [here](https://www.reddit.com/r/Simulated/comments/6va1j9/voxelized_explosion/dlz5zmi/).
 
 
-https://github.com/georgmartius/vid.stab#usage-instructions
+If you are interested in ImageStabilization visit [/r/ImageStabilization](https://www.reddit.com/r/ImageStabilization/)
 
-### first pass
-
-Use default values:
-
-ffmpeg -i input.mp4 -vf vidstabdetect -f null -
-
--f null - makes sure that no output is produced as this is just the first pass. This in-turn results in faster speed.
-
-Analyzing strongly shaky video and putting the results in file mytransforms.trf:
-
-ffmpeg -i input.mp4 -vf vidstabdetect=shakiness=10:accuracy=15:result="mytransforms.trf" -f null -
-
-Visualizing the result of internal transformations in the resulting video:
-
-ffmpeg -i input.mp4 -vf vidstabdetect=show=1 dummy_output.mp4
-
-Analyzing a video with medium shakiness:
-
-ffmpeg -i input.mp4 -vf vidstabdetect=shakiness=5:show=1 dummy_output.mp4
+**it didn' reply to my summon**: There was an internal error. (e.g. video
+couldn't be found, the comment was no top-level comment,
+result couldn't be uploaded).
 
 
-### 2nd pass
+# Dev-information
 
-Using default values:
+## relevant links
 
-ffmpeg -i input.mp4 -vf vidstabtransform,unsharp=5:5:0.8:3:3:0.4 out_stabilized.mp4
+[guide to reddit bots](http://pythonforengineers.com/build-a-reddit-bot-part-1/)
 
-Note the use of the ffmpeg's unsharp filter which is always recommended.
+[documention of vid.stab](https://github.com/georgmartius/vid.stab)
 
-Zooming-in a bit more and load transform data from a given file:
+## deployment
 
-ffmpeg -i input.mp4 -vf vidstabtransform=zoom=5:input="mytransforms.trf" out_stabilized2.mp4
+    git pull git@gitlab.com:wotanii/stabbot.git
+    cd stabbot
+    nano secret.py
+    docker-compose up --build -d
+    docker-compose logs -f -t
 
-Smoothening the video even more:
+secret.py must contain:
 
-ffmpeg -i input.mp4 -vf vidstabtransform=smoothing=30:input="mytransforms.trf" out_stabilized.mp4
+* imgur_id
+* reddit_client_id
+* reddit_client_secret
+* reddit_password
+
+
+## update
+
+    cd stabbot
+    git pull
+    docker-compose down
+    docker-compose up --build -d
+    docker-compose logs -f -t
+
+Then summon it somewhere to make sure nothing broke.
+E.g. on [/r/testingground4bots](https://www.reddit.com/r/testingground4bots/)
