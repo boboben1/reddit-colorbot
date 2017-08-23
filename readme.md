@@ -76,6 +76,20 @@ result couldn't be uploaded).
 
 [documention of vid.stab](https://github.com/georgmartius/vid.stab)
 
+## testing
+
+testing-related variables in bot.py:
+
+    dryrun = False
+    debug = False
+    include_old_mentions = False
+
+* *debug* just prints extra debug-info.
+* *dryrun* won't upload videos and replies
+* *include_old_mentions* will include old-summons.
+
+I might eventually move those to env-vars.
+
 ## deployment
 
     git pull git@gitlab.com:wotanii/stabbot.git
