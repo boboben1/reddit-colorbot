@@ -68,6 +68,9 @@ def search_and_download_video(submission):
                                            + ", Maximum duration: " + str(max_video_length_seconds) + ". ")
         if 'fallback_url' in submission.media:
             return download_file(submission.media['fallback_url'])
+        if 'reddit_video' in submission.media and \
+                'fallback_url' in submission.media['reddit_video']:
+            return download_file(submission.media['reddit_video']['fallback_url'])
 
     if parsed_uri.netloc.endswith(".youtube.com") \
             or parsed_uri.netloc.endswith("youtu.be"):
