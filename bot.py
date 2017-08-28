@@ -178,6 +178,9 @@ reddit = praw.Reddit('my_bot',
                      client_id=secret.reddit_client_id,
                      client_secret=secret.reddit_client_secret,
                      password=secret.reddit_password)
+
+print("reddit user: " + reddit.user.me().name)
+
 gfyclient = GfycatClient()
 
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
