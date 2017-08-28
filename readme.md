@@ -106,6 +106,10 @@ secret.py must contain:
 * reddit_client_secret
 * reddit_password
 
+### stabbot_crop
+
+    git clone git@gitlab.com:wotanii/stabbot.git --branch crop --single-branch stabbot_crop
+
 
 ## update
 
