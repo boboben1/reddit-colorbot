@@ -109,6 +109,9 @@ secret.py must contain:
 ### stabbot_crop
 
     git clone git@gitlab.com:wotanii/stabbot.git --branch crop --single-branch stabbot_crop
+    cp stabbot/secret.py stabbot_crop/
+    cd stabbot_crop
+    ...
 
 
 ## update
