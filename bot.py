@@ -88,7 +88,8 @@ def generate_reply(uploaded_url, conversion_time):
      "It took me " + str(round(conversion_time)) + " seconds to process." \
      "\n\n ___ \n\n ^^If ^^you ^^want ^^to ^^know ^^how ^^to ^^summon ^^me: " \
      "[^^click ^^here](https://www.reddit.com/r/botwatch/" \
-     "comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. "
+     "comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. " \
+     "\n\n^^If ^^you ^^want ^^your ^^video ^^to ^^also ^^be ^^cropped, ^^use ^^/u\/stabbot_crop ^^instead ^^/u\/stabbot"
 
 
 def clear_env():
