@@ -82,14 +82,15 @@ def upload_file(locale_file_name):
     raise RuntimeError("could not upload file")
 
 
-def generate_reply(uploaded_url, conversion_time):
-    return ""\
-     "I have stabilized the video for you: " + uploaded_url + "\n\n" \
-     "It took me " + str(round(conversion_time)) + " seconds to process." \
-     "\n\n ___ \n\n ^^If ^^you ^^want ^^to ^^know ^^how ^^to ^^summon ^^me: " \
-     "[^^click ^^here](https://www.reddit.com/r/botwatch/" \
-     "comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. " \
-     "\n\n^^If ^^you ^^want ^^your ^^video ^^to ^^also ^^be ^^cropped, ^^use ^^/u\/stabbot_crop ^^instead ^^/u\/stabbot"
+def generate_reply(uploaded_url, conversion_time, over_18):
+    nsfw_tag = "# --- NSFW --- \n\n" if over_18 else ""
+    return nsfw_tag +\
+        "I have stabilized the video for you: " + uploaded_url + "\n\n" \
+        "It took me " + str(round(conversion_time)) + " seconds to process." \
+        "\n\n ___ \n\n ^^If ^^you ^^want ^^to ^^know ^^how ^^to ^^summon ^^me: " \
+        "[^^click ^^here](https://www.reddit.com/r/botwatch/" \
+        "comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. \n\n" \
+        "^^If ^^you ^^want ^^your ^^video ^^to ^^also ^^be ^^cropped, ^^use ^^/u\/stabbot_crop ^^instead ^^/u\/stabbot"
 
 
 def clear_env():
@@ -152,7 +153,7 @@ def main():
             input_path = search_and_download_video(mention.submission)
             stab_file(input_path, "stabilized.mp4")
             uploaded_url = upload_file('stabilized.mp4')
-            reply_md = generate_reply(uploaded_url, time.time() - start_time)
+            reply_md = generate_reply(uploaded_url, time.time() - start_time, mention.submission.over_18)
 
         except Exception as e:
             print "Exception:"
