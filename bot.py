@@ -46,8 +46,8 @@ def post_reply(reply_md, mention):
 
 def upload_file(locale_file_name):
     print "uploading..."
-#    if dryrun:
-#        return "https://gfycat.com/FamiliarSimplisticAegeancat"
+    if dryrun:
+        return "https://gfycat.com/FamiliarSimplisticAegeancat"
 
     for uplodad_it in range(0, 3):
         try:
