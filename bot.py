@@ -46,8 +46,8 @@ def post_reply(reply_md, mention):
 
 def upload_file(locale_file_name):
     print "uploading..."
-    if dryrun:
-        return "https://gfycat.com/FamiliarSimplisticAegeancat"
+#    if dryrun:
+#        return "https://gfycat.com/FamiliarSimplisticAegeancat"
 
     for uplodad_it in range(0, 3):
         try:
@@ -74,7 +74,8 @@ def upload_file(locale_file_name):
                 time.sleep(gfycat_retry_sleep_s)
                 break
 
-            file_path = file_info['mp4Url']
+            # file_path = file_info['mp4Url']
+            file_path = "https://gfycat.com/" + file_info['gfyId']
             with open(gfylinks_path, "a") as f:
                 f.write(file_path + "\n")
 
@@ -83,14 +84,17 @@ def upload_file(locale_file_name):
 
 
 def generate_reply(uploaded_url, conversion_time, over_18):
-    nsfw_tag = "# --- NSFW --- \n\n" if over_18 else ""
-    return nsfw_tag +\
-        "I have stabilized the video for you: " + uploaded_url + "\n\n" \
-        "It took me " + str(round(conversion_time)) + " seconds to process." \
-        "\n\n ___ \n\n ^^If ^^you ^^want ^^to ^^know ^^how ^^to ^^summon ^^me: " \
-        "[^^click ^^here](https://www.reddit.com/r/botwatch/" \
-        "comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)^^. \n\n" \
-        "^^If ^^you ^^want ^^your ^^video ^^to ^^also ^^be ^^cropped, ^^use ^^/u\/stabbot_crop ^^instead ^^/u\/stabbot"
+    nsfw_tag = "# --- NSFW --- \n\n " if over_18 else ""
+
+    return (nsfw_tag +
+            "I have stabilized the video for you: " + uploaded_url + " \n\n"
+            "It took " + str(round(conversion_time)) + " seconds to process \n"
+            "___\n"
+            "[^^summon ^^guide]"
+            "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
+            " ^^| [^^message ^^to ^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
+            " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
+            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot")
 
 
 def clear_env():
@@ -122,7 +126,8 @@ def get_next_job(posts_replied_to):
     for mention in reddit.inbox.mentions(limit=50):
         if not mention.new and not include_old_mentions:
             continue
-        mention.mark_read()
+        if not dryrun:
+            mention.mark_read()
         if not mention.is_root:
             print "comment is not root: ", mention
             continue
