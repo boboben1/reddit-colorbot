@@ -94,8 +94,8 @@ def generate_reply(uploaded_url, conversion_time, over_18):
             "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
             " ^^| [^^contact ^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
             " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
-            " ^^| ^^shout-out ^^to ^^/r/ImageStabilization"
-            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot")
+            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot"
+            " ^^| ^^for ^^better ^^results, ^^open ^^a ^^request ^^at ^^/r/ImageStabilization")
 
 
 def clear_env():
