@@ -92,8 +92,9 @@ def generate_reply(uploaded_url, conversion_time, over_18):
             "___\n"
             "[^^summon ^^guide]"
             "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
-            " ^^| [^^message ^^to ^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
+            " ^^| [^^contact ^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
             " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
+            " ^^| ^^shout-out ^^to ^^/r/ImageStabilization"
             " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot")
 
 
