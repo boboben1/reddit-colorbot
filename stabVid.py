@@ -77,7 +77,8 @@ def stab_file(input_path, output_path):
             [ffmpeg_full_path,
              "-y",
              "-i", zoomed_file_name,
-             "-vf", "vidstabtransform=smoothing=20:crop=black:zoom="+video_zoom_factor+":optzoom=0",
+             "-vf", "vidstabtransform=smoothing=20:crop=black:zoom="+video_zoom_factor
+                    + ":optzoom=0,unsharp=5:5:0.8:3:3:0.4",
              output_path],
             stderr=subprocess.STDOUT)
         print "stab_file... done"

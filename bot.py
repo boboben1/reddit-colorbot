@@ -95,7 +95,7 @@ def generate_reply(uploaded_url, conversion_time, over_18):
             " ^^| [^^contact ^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
             " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
             " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot"
-            " ^^| ^^for ^^better ^^results, ^^open ^^a ^^request ^^at ^^/r\/ImageStabilization")
+            " ^^| ^^for ^^better ^^results, ^^open ^^a ^^request ^^at ^^/r\s/ImageStabilization")
 
 
 def clear_env():
