@@ -36,7 +36,6 @@ class VideoBrokenException(Exception):
 def stab_file(input_path, output_path):
 
     zoomed_file_name = "zoomed.mp4"
-    print "probing file... "
     metadata = FFProbe(input_path)
     if len(metadata.video) > 1:
         raise VideoBrokenException("Video may not contain multiple video streams")
@@ -46,7 +45,6 @@ def stab_file(input_path, output_path):
     could_check_dur_initially = check_vid_duration(input_path)
 
     try:
-        print "zooming..."
         # zoom by the size of the zoom in the stabilization, the total output file is bigger,
         # but no resolution is lost to the crop
         subprocess.check_output(
@@ -59,10 +57,10 @@ def stab_file(input_path, output_path):
             stderr=subprocess.STDOUT)
 
         if not could_check_dur_initially:
-            # sometimes metadata on original vids were broken, so we need to re-check after fixing it during the first ffmpeg-pass
+            # sometimes metadata on original vids were broken,
+            # so we need to re-check after fixing it during the first ffmpeg-pass
             check_vid_duration(zoomed_file_name)
 
-        print "detecting ..."
         subprocess.check_output(
             [ffmpeg_full_path,
              "-y",
@@ -72,7 +70,6 @@ def stab_file(input_path, output_path):
              "-"],
             stderr=subprocess.STDOUT)
 
-        print "applying transformation..."
         subprocess.check_output(
             [ffmpeg_full_path,
              "-y",
@@ -88,7 +85,6 @@ def stab_file(input_path, output_path):
         print "cpe.output", cpe.output
 
         raise VideoStabilisingException, "ffmpeg could't compute file", cpe
-
 
 
 def is_number(s):
