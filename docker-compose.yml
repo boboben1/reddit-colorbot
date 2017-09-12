@@ -6,3 +6,10 @@ services:
      - ./data:/bot/data
     cpu_count: 1
     mem_limit: 3G
+  redis:
+    image: redis
+    volumes:
+     - ./redis-data:/data
+    expose:
+     - 6379
+

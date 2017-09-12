@@ -7,6 +7,7 @@ import shutil
 import time
 import re
 import hashlib
+import redis
 
 
 # ####################### #
@@ -194,9 +195,15 @@ gfyclient = GfycatClient()
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
 gfylinks_path = os.path.abspath("data/gfylinks.txt")
 
-dryrun = False
-debug = False
-include_old_mentions = False
+
+r = redis.Redis(
+    host='redis',
+    port=6379,
+    password='')
+
+dryrun = True
+debug = True
+include_old_mentions = True
 woring_path = os.path.abspath("data/working")
 
 sleep_time_s = 10
