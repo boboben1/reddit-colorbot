@@ -78,7 +78,6 @@ def stab_file(input_path, output_path):
                     + ":optzoom=0,unsharp=5:5:0.8:3:3:0.4",
              output_path],
             stderr=subprocess.STDOUT)
-        print "stab_file... done"
     except subprocess.CalledProcessError as cpe:
         print "cpe.returncode", cpe.returncode
         print "cpe.cmd", cpe.cmd

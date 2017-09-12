@@ -45,7 +45,6 @@ def post_reply(reply_md, mention):
 
 
 def upload_file(locale_file_name):
-    print "uploading..."
     if dryrun:
         return "https://gfycat.com/FamiliarSimplisticAegeancat"
 
@@ -75,7 +74,7 @@ def upload_file(locale_file_name):
                 break
 
             # file_path = file_info['mp4Url']
-            file_path = "https://gfycat.com/" + file_info['gfyId']
+            file_path = "https://gfycat.com/" + file_info['gfyName']
             with open(gfylinks_path, "a") as f:
                 f.write(file_path + "\n")
 
@@ -83,12 +82,13 @@ def upload_file(locale_file_name):
     raise RuntimeError("could not upload file")
 
 
-def generate_reply(uploaded_url, conversion_time, over_18):
+def generate_reply(uploaded_url, proc_time, upload_time, over_18):
     nsfw_tag = "# --- NSFW --- \n\n " if over_18 else ""
 
     return (nsfw_tag +
             "I have stabilized the video for you: " + uploaded_url + " \n\n"
-            "It took " + str(round(conversion_time)) + " seconds to process \n"
+            "It took " + str(round(proc_time)) + " seconds to process "
+            "and " + str(round(upload_time)) + " seconds to upload.\n"
             "___\n"
             "[^^summon ^^guide]"
             "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
@@ -158,8 +158,10 @@ def main():
 
             input_path = search_and_download_video(mention.submission)
             stab_file(input_path, "stabilized.mp4")
+            proc_time = time.time() - start_time
             uploaded_url = upload_file('stabilized.mp4')
-            reply_md = generate_reply(uploaded_url, time.time() - start_time, mention.submission.over_18)
+            upload_time = time.time() - start_time - proc_time
+            reply_md = generate_reply(uploaded_url, proc_time, upload_time, mention.submission.over_18)
 
         except Exception as e:
             print "Exception:"
