@@ -73,7 +73,6 @@ def upload_file(locale_file_name):
                 time.sleep(gfycat_md5_retry_sleep_s)
                 break
 
-            # file_path = file_info['mp4Url']
             file_path = "https://gfycat.com/" + file_info['gfyName']
             with open(gfylinks_path, "a") as f:
                 f.write(file_path + "\n")
@@ -90,12 +89,12 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18):
             "It took " + str(round(proc_time)) + " seconds to process "
             "and " + str(round(upload_time)) + " seconds to upload.\n"
             "___\n"
-            "[^^summon ^^guide]"
+            "[^^how ^^to]"
             "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
-            " ^^| [^^contact ^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
+            " ^^| [^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
             " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
-            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot"
-            " ^^| ^^for ^^better ^^results, ^^open ^^a ^^request ^^at ^^/r\/ImageStabilization")
+            " ^^| ^^/r/ImageStabilization"
+            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot")
 
 
 def clear_env():
