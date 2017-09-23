@@ -86,8 +86,8 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18):
 
     return (nsfw_tag +
             "I have stabilized the video for you: " + uploaded_url + " \n\n"
-            "It took " + str(round(proc_time)) + " seconds to process "
-            "and " + str(round(upload_time)) + " seconds to upload.\n"
+            "It took " + "%.f" % proc_time + " seconds to process "
+            "and " +  "%.f" % upload_time + " seconds to upload.\n"
             "___\n"
             "[^^how ^^to]"
             "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
@@ -195,8 +195,8 @@ gfyclient = GfycatClient()
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
 gfylinks_path = os.path.abspath("data/gfylinks.txt")
 
-dryrun = False
-debug = False
+dryrun = True
+debug = True
 include_old_mentions = False
 woring_path = os.path.abspath("data/working")
 
