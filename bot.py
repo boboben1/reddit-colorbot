@@ -89,12 +89,12 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18):
             "It took " + "%.f" % proc_time + " seconds to process "
             "and " +  "%.f" % upload_time + " seconds to upload.\n"
             "___\n"
-            "[^^how ^^to]"
+            "[^^how ^^to ^^use]"
             "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
             " ^^| [^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
             " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
-            " ^^| ^^/r/ImageStabilization"
-            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot")
+            " ^^| ^^/r/stabbot"
+            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop")
 
 
 def clear_env():
