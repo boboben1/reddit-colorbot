@@ -90,10 +90,10 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18):
             "and " +  "%.f" % upload_time + " seconds to upload.\n"
             "___\n"
             "[^^how ^^to ^^use]"
-            "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
+            "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)"
             " ^^| [^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
             " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
-            " ^^| ^^/r/stabbot"
+            " ^^| ^^/r/ImageStabilization/"
             " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop")
 
 
