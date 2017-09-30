@@ -64,9 +64,14 @@ this can be found [here](https://www.reddit.com/r/Simulated/comments/6va1j9/voxe
 
 If you are interested in ImageStabilization visit [/r/ImageStabilization](https://www.reddit.com/r/ImageStabilization/)
 
-**it didn' reply to my summon**: There was an internal error. (e.g. video
+**it didn't reply to my summon**: There was an internal error. (e.g. video
 couldn't be found, the comment was no top-level comment,
 result couldn't be uploaded).
+
+**it didn't reply to my summon on a saturday** or **the upload is takes really really long**: Many people are uploading to 
+gfycat at the same time and bots have a very low priority compared to human uploaders. During peak-hours gfycat even seems to 
+halt bot-uploads entirely. When that happens, all the bot can do is to try again and again, until the video finally makes a through. 
+And if it doesn't work after about 2h, the video is dropped and the bot continues with the next one. 
 
 
 # Dev-information
