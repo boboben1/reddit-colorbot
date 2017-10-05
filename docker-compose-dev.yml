@@ -1,15 +1,15 @@
-version: '2.2'
+version: '2.1'
 services:
   stabbot:
     build: .
     volumes:
      - ./data:/bot/data
-    cpu_count: 1
+#    cpu_count: 1
     mem_limit: 3G
     environment:
-      - DEBUG=False
-      - DRYRUN=False
-      - INCLUDE_OLD_MENTIONS=False
+      - DEBUG=True
+      - DRYRUN=True
+      - INCLUDE_OLD_MENTIONS=True
 
   redis:
     image: redis

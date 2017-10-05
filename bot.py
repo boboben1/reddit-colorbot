@@ -46,11 +46,10 @@ def post_reply(reply_md, mention):
 
 
 def upload_file(locale_file_name):
-    print "uploading..."
     if dryrun:
         return "https://gfycat.com/FamiliarSimplisticAegeancat"
 
-    for uplodad_it in range(0, 3):
+    for uplodad_it in range(0, gfycat_max_retry):
         try:
             file_info = gfyclient.upload_from_file(locale_file_name)
         except Exception as e:
@@ -58,25 +57,24 @@ def upload_file(locale_file_name):
             print e.__class__, e.__doc__, e.message
             print e
             traceback.print_exc()
-            time.sleep(gfycat_retry_sleep_s)
+            time.sleep(gfycat_error_retry_sleep_s)
             continue
 
         local_md5 = hashlib.md5(open(locale_file_name, 'rb').read()).hexdigest()
         for query_it in range(0, 3):
             if 'md5' not in file_info:
                 print("md5 is not yet ready. So pause and try again")
-                time.sleep(gfycat_retry_sleep_s)
+                time.sleep(gfycat_md5_retry_sleep_s)
                 file_info = gfyclient.query_gfy(file_info['gfyName'])['gfyItem']
                 continue
 
             if local_md5 != file_info['md5']:
                 print "hash mismatch. local_md5: " + local_md5 + "  remote_md5: " + file_info['md5']
                 print "uploading again..."
-                time.sleep(gfycat_retry_sleep_s)
+                time.sleep(gfycat_md5_retry_sleep_s)
                 break
 
-            # file_path = file_info['mp4Url']
-            file_path = "https://gfycat.com/" + file_info['gfyId']
+            file_path = "https://gfycat.com/" + file_info['gfyName']
             with open(gfylinks_path, "a") as f:
                 f.write(file_path + "\n")
 
@@ -84,19 +82,20 @@ def upload_file(locale_file_name):
     raise RuntimeError("could not upload file")
 
 
-def generate_reply(uploaded_url, conversion_time, over_18):
+def generate_reply(uploaded_url, proc_time, upload_time, over_18):
     nsfw_tag = "# --- NSFW --- \n\n " if over_18 else ""
 
     return (nsfw_tag +
             "I have stabilized the video for you: " + uploaded_url + " \n\n"
-            "It took " + str(round(conversion_time)) + " seconds to process \n"
+            "It took " + "%.f" % proc_time + " seconds to process "
+            "and " +  "%.f" % upload_time + " seconds to upload.\n"
             "___\n"
-            "[^^summon ^^guide]"
-            "(https://www.reddit.com/r/botwatch/comments/6p1ilf/introducing_stabbot_a_bot_that_stabilizes_videos/)"
-            " ^^| [^^contact ^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
+            "[^^how ^^to ^^use]"
+            "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)"
+            " ^^| [^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"
             " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"
-            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop ^^instead ^^\/u/stabbot"
-            " ^^| ^^for ^^better ^^results, ^^open ^^a ^^request ^^at ^^/r\/ImageStabilization")
+            " ^^| ^^/r/ImageStabilization/"
+            " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop")
 
 
 def clear_env():
@@ -159,8 +158,10 @@ def main():
 
             input_path = search_and_download_video(mention.submission)
             stab_file(input_path, "stabilized.mp4")
+            proc_time = time.time() - start_time
             uploaded_url = upload_file('stabilized.mp4')
-            reply_md = generate_reply(uploaded_url, time.time() - start_time, mention.submission.over_18)
+            upload_time = time.time() - start_time - proc_time
+            reply_md = generate_reply(uploaded_url, proc_time, upload_time, mention.submission.over_18)
 
         except Exception as e:
             print "Exception:"
@@ -195,19 +196,21 @@ gfyclient = GfycatClient()
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
 gfylinks_path = os.path.abspath("data/gfylinks.txt")
 
-
 r = redis.Redis(
     host='redis',
     port=6379,
     password='')
 
-dryrun = True
-debug = True
-include_old_mentions = True
+dryrun = os.getenv('DRYRUN', True)
+debug = os.getenv('DEBUG', False)
+include_old_mentions = os.getenv('INCLUDE_OLD_MENTIONS', False)
+
 woring_path = os.path.abspath("data/working")
 
 sleep_time_s = 10
-gfycat_retry_sleep_s = 15
+gfycat_md5_retry_sleep_s = 15
+gfycat_error_retry_sleep_s = 300
+gfycat_max_retry = 20
 
 # ####################### #
 # ## excecution ######### #
