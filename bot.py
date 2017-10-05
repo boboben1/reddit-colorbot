@@ -195,9 +195,9 @@ gfyclient = GfycatClient()
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
 gfylinks_path = os.path.abspath("data/gfylinks.txt")
 
-dryrun = False
-debug = False
-include_old_mentions = False
+dryrun = os.getenv('DRYRUN', True)
+debug = os.getenv('DEBUG', False)
+include_old_mentions = os.getenv('INCLUDE_OLD_MENTIONS', False)
 woring_path = os.path.abspath("data/working")
 
 sleep_time_s = 10

@@ -6,3 +6,7 @@ services:
      - ./data:/bot/data
     cpu_count: 1
     mem_limit: 3G
+    environment:
+      - DEBUG=False
+      - DRYRUN=False
+      - INCLUDE_OLD_MENTIONS=False

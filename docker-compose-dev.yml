@@ -1,0 +1,12 @@
+version: '2.1'
+services:
+  stabbot:
+    build: .
+    volumes:
+     - ./data:/bot/data
+#    cpu_count: 1
+    mem_limit: 3G
+    environment:
+      - DEBUG=True
+      - DRYRUN=True
+      - INCLUDE_OLD_MENTIONS=True
