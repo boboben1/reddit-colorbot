@@ -85,12 +85,12 @@ def upload_file(locale_file_name):
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
-    result_note = "I have stabilized the video for you: " + uploaded_url
+    result_note = "I have stabilized the video for you: " + uploaded_url + " \n"
 
     if cache_hit:
         time_note = ""
     else:
-        time_note = "\n\nIt took " + "%.f" % proc_time + " seconds to process "\
+        time_note = "\nIt took " + "%.f" % proc_time + " seconds to process "\
                         "and " +  "%.f" % upload_time + " seconds to upload.\n"
 
     foot_note = "[^^how ^^to ^^use]"\
@@ -199,6 +199,11 @@ r = redis.Redis(
 dryrun = os.getenv('DRYRUN', True)
 debug = os.getenv('DEBUG', False)
 include_old_mentions = os.getenv('INCLUDE_OLD_MENTIONS', False)
+
+print("config: \n"
+      "\ndryrun: " + dryrun
+      + "\ndebug: " + debug
+      + "\nold_mentions: " + old_mentions)
 
 woring_path = os.path.abspath("data/working")
 
