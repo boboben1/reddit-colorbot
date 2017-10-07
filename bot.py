@@ -46,6 +46,7 @@ def post_reply(reply_md, mention):
 
 
 def upload_file(locale_file_name):
+    print("upload_file...")
     if dryrun:
         return "https://gfycat.com/FamiliarSimplisticAegeancat"
 
@@ -120,6 +121,8 @@ def get_next_job():
             continue
         if not dryrun:
             mention.mark_read()
+        else:
+            print("bbb _ dryrun: " + dryrun)
 
         return mention
 
@@ -144,6 +147,7 @@ def main():
             start_time = time.time()
 
             input_path = search_and_download_video(mention.submission)
+            cached_result = None
             cached_result = check_cache(input_path)
             if(cached_result is None):
                 stab_file(input_path, "stabilized.mp4")
@@ -174,6 +178,11 @@ def main():
                 print e
                 traceback.print_exc()
 
+def s2b(s,default):
+    if not s: return default
+    if s == "True": return True
+    if s == "False": return False
+    raise ValueError("string must be empty, True or False.")
 
 # ####################### #
 # ## global constants ### #
@@ -196,14 +205,14 @@ r = redis.Redis(
     port=6379,
     password='')
 
-dryrun = os.getenv('DRYRUN', True)
-debug = os.getenv('DEBUG', False)
-include_old_mentions = os.getenv('INCLUDE_OLD_MENTIONS', False)
+dryrun = s2b(os.getenv('DRYRUN'), True)
+debug = s2b(os.getenv('DEBUG'), False)
+include_old_mentions = s2b(os.getenv('INCLUDE_OLD_MENTIONS'), False)
 
-print("config: \n"
-      "\ndryrun: " + dryrun
-      + "\ndebug: " + debug
-      + "\nold_mentions: " + include_old_mentions)
+print("config:"
+      "\n\tdryrun: " + str(dryrun)
+      + "\n\tdebug: " + str(debug)
+      + "\n\told_mentions: " + str(include_old_mentions))
 
 woring_path = os.path.abspath("data/working")
 
