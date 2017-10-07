@@ -203,7 +203,7 @@ include_old_mentions = os.getenv('INCLUDE_OLD_MENTIONS', False)
 print("config: \n"
       "\ndryrun: " + dryrun
       + "\ndebug: " + debug
-      + "\nold_mentions: " + old_mentions)
+      + "\nold_mentions: " + include_old_mentions)
 
 woring_path = os.path.abspath("data/working")
 
