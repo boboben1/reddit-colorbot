@@ -113,6 +113,8 @@ def download_file(video_src):
     print "download_file " + video_src
     path = urlparse.urlparse(video_src).path
     ext = os.path.splitext(path)[1]
+    if not ext:
+        ext = ".mp4"
     test = urllib.FancyURLopener()
     target_path = "input" + ext
     test.retrieve(video_src, target_path)
