@@ -1,9 +1,10 @@
 
 /.idea/
+/data/redis/
 /data/working/
-.tags
-secret.py
 /data/gfylinks.txt
 /data/posts_replied_to.txt
-*.pyc
 
+.tags
+secret.py
+*.pyc

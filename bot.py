@@ -102,7 +102,6 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
 
     return nsfw_note\
         + result_note\
-        + uploaded_url\
         + time_note\
         + "___\n"\
         + foot_note
