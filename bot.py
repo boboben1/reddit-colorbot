@@ -150,7 +150,12 @@ def main():
                 proc_time = time.time() - start_time
                 uploaded_url = upload_file('stabilized.mp4')
                 set_cache(uploaded_url, input_path)
-            upload_time = time.time() - start_time - proc_time
+                upload_time = time.time() - start_time - proc_time
+            else:
+                uploaded_url = cached_result
+                proc_time = 0
+                upload_time = 0
+
             reply_md = generate_reply(uploaded_url, proc_time, upload_time, mention.submission.over_18, cached_result is not None)
 
         except Exception as e:
