@@ -8,6 +8,7 @@ import time
 import re
 import hashlib
 import redis
+import prawcore
 
 
 # ####################### #
@@ -17,6 +18,7 @@ import redis
 import secret
 from scrapeVid import search_and_download_video
 from stabVid import stab_file
+import stabVid
 
 
 # ####################### #
@@ -122,7 +124,7 @@ def get_next_job():
         if not dryrun:
             mention.mark_read()
         else:
-            print("bbb _ dryrun: " + dryrun)
+            print("bbb _ dryrun: " + str(dryrun))
 
         return mention
 
@@ -133,6 +135,15 @@ def check_cache(input_path):
 def set_cache(uploaded_url, input_path):
     input_md5 = hashlib.md5(open(input_path, 'rb').read()).hexdigest()
     r.set("md5-" + input_md5, uploaded_url)
+
+
+def send_message(redditor, text):
+    if dryrun:
+        print("message to " + redditor.name + " would be: " + text)
+        return
+
+    redditor.message('Video is stabilized', text)
+    pass
 
 def main():
     print "starting..."
@@ -147,7 +158,6 @@ def main():
             start_time = time.time()
 
             input_path = search_and_download_video(mention.submission)
-            cached_result = None
             cached_result = check_cache(input_path)
             if(cached_result is None):
                 stab_file(input_path, "stabilized.mp4")
@@ -162,21 +172,18 @@ def main():
 
             reply_md = generate_reply(uploaded_url, proc_time, upload_time, mention.submission.over_18, cached_result is not None)
 
+            post_reply(reply_md, mention)
+        except prawcore.exceptions.Forbidden:
+            print("Error: prawcore.exceptions.Forbidden")
+            send_message(mention.author, "I could not reply to your comment, because I have been banned in this community. \n---\n" + reply_md)
+
+
         except Exception as e:
             print "Exception:"
             print e.__class__, e.__doc__, e.message
             print e
             traceback.print_exc()
 
-        else:
-            try:
-                if reply_md:
-                    post_reply(reply_md, mention)
-            except Exception as e:
-                print "Exception during post_reply:"
-                print e.__class__, e.__doc__, e.message
-                print e
-                traceback.print_exc()
 
 def s2b(s,default):
     if not s: return default
