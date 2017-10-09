@@ -138,8 +138,9 @@ def set_cache(uploaded_url, input_path):
 
 
 def send_message(redditor, text):
+    print("sending PM to " + redditor.name)
     if dryrun:
-        print("message to " + redditor.name + " would be: " + text)
+        print("message would be: " + text)
         return
 
     redditor.message('Video is stabilized', text)
