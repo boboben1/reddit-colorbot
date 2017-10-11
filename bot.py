@@ -56,10 +56,7 @@ def upload_file(locale_file_name):
         try:
             file_info = gfyclient.upload_from_file(locale_file_name)
         except Exception as e:
-            print "Exception:"
-            print e.__class__, e.__doc__, e.message
-            print e
-            traceback.print_exc()
+            print "Exception:" + str(e) + str(e.message)
             time.sleep(gfycat_error_retry_sleep_s)
             continue
 
