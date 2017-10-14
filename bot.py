@@ -129,6 +129,7 @@ def check_cache(input_path):
     input_md5 = hashlib.md5(open(input_path, 'rb').read()).hexdigest()
     return r.get("md5-" + input_md5)
 
+
 def set_cache(uploaded_url, input_path):
     input_md5 = hashlib.md5(open(input_path, 'rb').read()).hexdigest()
     r.set("md5-" + input_md5, uploaded_url)
@@ -142,6 +143,7 @@ def send_message(redditor, text):
 
     redditor.message('Video is stabilized', text)
     pass
+
 
 def main():
     print "starting..."
