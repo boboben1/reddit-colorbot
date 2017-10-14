@@ -93,12 +93,12 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process "\
                         "and " +  "%.f" % upload_time + " seconds to upload.\n"
 
-    foot_note = "[^^how ^^to ^^use]"\
+    foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]"\
                 "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)"\
-                " ^^| [^^programmer](https://www.reddit.com/message/compose/?to=wotanii)"\
-                " ^^| [^^source ^^code](https://gitlab.com/wotanii/stabbot)"\
-                " ^^| ^^/r/ImageStabilization/"\
-                " ^^| ^^for ^^cropped ^^results, ^^use ^^\/u/stabbot_crop"\
+                "&nbsp;|&nbsp;[programmer](https://www.reddit.com/message/compose/?to=wotanii)"\
+                "&nbsp;|&nbsp;[source&nbsp;code](https://gitlab.com/wotanii/stabbot)"\
+                "&nbsp;|&nbsp;/r/ImageStabilization/"\
+                "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop"\
 
     return nsfw_note\
         + result_note\
