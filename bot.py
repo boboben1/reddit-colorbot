@@ -157,7 +157,7 @@ def main():
             print "submission: " + mention.submission.id + " - " + mention.submission.shortlink
             start_time = time.time()
 
-            input_path = search_and_download_video(mention.submission)
+            input_path = search_and_download_video(mention.submission, user_agent)
             cached_result = check_cache(input_path)
             if(cached_result is None):
                 stab_file(input_path, "stabilized.mp4")
@@ -195,10 +195,13 @@ def s2b(s,default):
 # ## global constants ### #
 # ####################### #
 
+user_agent = "ubuntu:de.wotanii.stabbot:v0.1 (by /u/wotanii)"
+
 reddit = praw.Reddit('my_bot',
                      client_id=secret.reddit_client_id,
                      client_secret=secret.reddit_client_secret,
-                     password=secret.reddit_password)
+                     password=secret.reddit_password,
+                     user_agent=user_agent)
 
 print("reddit user: " + reddit.user.me().name)
 

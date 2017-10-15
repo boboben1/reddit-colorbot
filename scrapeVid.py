@@ -13,6 +13,8 @@ from stabVid import VideoBrokenException, max_video_length_seconds
 
 imgur = pyimgur.Imgur(secret.imgur_id)
 
+user_agent = None
+
 
 class VideoNotFoundException(Exception):
     pass
@@ -51,7 +53,9 @@ def extract_video_url_from_page(page_url):
     return None
 
 
-def search_and_download_video(submission):
+def search_and_download_video(submission, new_user_agent):
+    global user_agent
+    user_agent= new_user_agent
 
     submission_url = submission.url
     parsed_uri = urlparse.urlparse(submission_url)
@@ -115,7 +119,8 @@ def download_file(video_src):
     ext = os.path.splitext(path)[1]
     if not ext:
         ext = ".mp4"
-    test = urllib.FancyURLopener()
     target_path = "input" + ext
+    test = urllib.FancyURLopener()
+    test.addheaders = [('User-Agent', user_agent)]
     test.retrieve(video_src, target_path)
     return target_path
