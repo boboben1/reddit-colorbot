@@ -9,6 +9,8 @@ import re
 import hashlib
 import redis
 import prawcore
+from openload import OpenLoad
+import uuid
 
 
 # ####################### #
@@ -47,7 +49,7 @@ def post_reply(reply_md, mention):
             raise e
 
 
-def upload_file(locale_file_name):
+def upload_file_gfycat(locale_file_name):
     print("upload_file...")
     if dryrun:
         return "https://gfycat.com/FamiliarSimplisticAegeancat"
@@ -80,6 +82,22 @@ def upload_file(locale_file_name):
 
             return file_path
     raise RuntimeError("could not upload file")
+
+
+def upload_file_openload(locale_file_name):
+    upload_resp = openload.upload_file(locale_file_name)
+    return upload_resp.get('url')
+
+def upload_file(locale_file_name):
+    # need unique filename for openload
+    oldext = os.path.splitext(locale_file_name)[1]
+    newName = str(uuid.uuid4()) + oldext
+    os.rename(locale_file_name, newName)
+    try:
+        return upload_file_openload(newName)
+    except Exception as e:
+        print "openload-error: ", e.__class__, e.__doc__, e.message
+        return upload_file_gfycat(newName)
 
 
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
@@ -214,6 +232,9 @@ r = redis.Redis(
     host='redis',
     port=6379,
     password='')
+
+openload = OpenLoad(secret.openload_id, secret.openload_api_key)
+print("openload: " + str(openload.account_info()))
 
 dryrun = s2b(os.getenv('DRYRUN'), True)
 debug = s2b(os.getenv('DEBUG'), False)
