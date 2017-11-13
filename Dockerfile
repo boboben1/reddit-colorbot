@@ -91,7 +91,7 @@ RUN cd ~/ffmpeg_sources \
     && make install \
     && hash -r
 
-# workaround: ffprobe-wrabber doesn't find ffprobe otherwise
+# workaround: ffprobe-wrapper doesn't find ffprobe otherwise
 RUN cp -r ~/bin/* /bin
 
 ###########################
@@ -111,4 +111,3 @@ COPY stabVid.py /bot
 
 ENV PYTHONUNBUFFERED 0
 CMD ["python", "bot.py"]
-
