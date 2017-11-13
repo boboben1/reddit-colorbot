@@ -193,7 +193,7 @@ def main():
             post_reply(reply_md, mention)
         except prawcore.exceptions.Forbidden:
             print("Error: prawcore.exceptions.Forbidden")
-            send_message(mention.author, "I could not reply to [your comment]("+str(mention.permalink())+"), because I have been banned in this community. \n___\n" + reply_md)
+            send_message(mention.author, "I could not reply to [your comment]("+str(mention.permalink+"), because I have been banned in this community. \n___\n" + reply_md)
 
 
         except Exception as e:
