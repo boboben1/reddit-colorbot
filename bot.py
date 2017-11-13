@@ -86,7 +86,7 @@ def upload_file_gfycat(locale_file_name):
 
 def upload_file_openload(locale_file_name):
     upload_resp = openload.upload_file(locale_file_name)
-    return upload_resp.get('url')
+    return "https://openload.co/embed/" + upload_resp[u'id']
 
 def upload_file(locale_file_name):
     # need unique filename for openload
