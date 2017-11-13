@@ -80,7 +80,7 @@ def search_and_download_video(submission, new_user_agent):
             or parsed_uri.netloc.endswith("youtu.be"):
         yt = YouTube(submission_url)
         # get highest mp4 video and hope there is at least one.
-        return download_file(yt.filter('mp4')[-1].url)
+        return download_file(yt.streams.filter(subtype='mp4').first().url)
     if parsed_uri.netloc.endswith(".imgur.com") or parsed_uri.netloc == "imgur.com":
 
         if parsed_uri.path.endswith('.gifv'):
