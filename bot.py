@@ -34,7 +34,7 @@ def post_reply(reply_md, mention):
         return
 
     try:
-        mention.reply(reply_md.replace("https://openload.co","https\://openload.co"))
+        mention.reply(reply_md.replace("https://openload.co","http://openload.wotanii.de"))
     except APIException as e:
         if e.error_type == 'RATELIMIT':
             print "I was posting too fast. Error-Message: " + e.message
