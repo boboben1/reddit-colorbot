@@ -103,7 +103,9 @@ def upload_file(locale_file_name):
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
-    result_note = "I have stabilized the video for you: " + uploaded_url + " \n"
+    result_note = "\nI have stabilized the video for you: " \
+                  + uploaded_url.replace("https://openload.co","http://openload.wotanii.de") \
+                  + "\n"
 
     if cache_hit:
         time_note = ""
@@ -111,7 +113,7 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process "\
                         "and " +  "%.f" % upload_time + " seconds to upload.\n"
 
-    addional_note = "I'm sending this to you as a PM, because I have trouble with \
+    addional_note = "\nI'm sending this to you as a PM, because I have trouble with \
     my original video-hoster and reddit does not allow comments containing links to openload.co. \
     Updates on this issue will be posted (here)[https://www.reddit.com/r/stabbot/comments/7clfl1/openload_instead_of_gfycat/]\n"
 
