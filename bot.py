@@ -115,7 +115,7 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
 
     addional_note = "\nI'm sending this to you as a PM, because I have trouble with \
     my original video-hoster and reddit does not allow comments containing links to openload.co. \
-    Updates on this issue will be posted (here)[https://www.reddit.com/r/stabbot/comments/7clfl1/openload_instead_of_gfycat/]\n"
+    Updates on this issue will be posted [here](https://www.reddit.com/r/stabbot/comments/7clfl1/openload_instead_of_gfycat/)\n"
 
     foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]"\
                 "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)"\
