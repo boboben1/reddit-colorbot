@@ -119,6 +119,8 @@ def assume_over_18(mention):
     if mention.subreddit.subscribers < 500:
         return True
 
+    return False
+
 
 def main():
     print "starting..."
