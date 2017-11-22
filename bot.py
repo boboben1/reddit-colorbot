@@ -34,7 +34,7 @@ def post_reply(reply_md, mention):
         return
 
     try:
-        mention.reply(reply_md.replace("https://openload.co","http://openload.wotanii.de"))
+        mention.reply(reply_md)
     except APIException as e:
         if e.error_type == 'RATELIMIT':
             print "I was posting too fast. Error-Message: " + e.message
@@ -111,6 +111,10 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process "\
                         "and " +  "%.f" % upload_time + " seconds to upload.\n"
 
+    addional_note = "I'm sending this to you as a PM, because I have trouble with \
+    my original video-hoster and reddit does not allow comments containing links to openload.co. \
+    Updates on this issue will be posted (here)[https://www.reddit.com/r/stabbot/comments/7clfl1/openload_instead_of_gfycat/]\n"
+
     foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]"\
                 "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)"\
                 "&nbsp;|&nbsp;[programmer](https://www.reddit.com/message/compose/?to=wotanii)"\
@@ -119,6 +123,7 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
                 "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop"\
 
     return nsfw_note\
+        + addional_note\
         + result_note\
         + time_note\
         + "___\n"\
@@ -190,7 +195,12 @@ def main():
 
             reply_md = generate_reply(uploaded_url, proc_time, upload_time, mention.submission.over_18, cached_result is not None)
 
-            post_reply(reply_md, mention)
+            if False:
+                post_reply(reply_md, mention)
+            else:
+                # "temporary" workaround
+                send_message(mention.author, reply_md)
+
         except prawcore.exceptions.Forbidden:
             print("Error: prawcore.exceptions.Forbidden")
             send_message(mention.author, "I could not reply to [your comment]("+str(mention.context)+"), because I have been banned in this community. \n___\n" + reply_md)
