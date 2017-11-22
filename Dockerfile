@@ -108,6 +108,7 @@ COPY bot.py /bot
 COPY secret.py /bot
 COPY scrapeVid.py /bot
 COPY stabVid.py /bot
+COPY vidUpload.py /bot
 
 ENV PYTHONUNBUFFERED 0
 CMD ["python", "bot.py"]

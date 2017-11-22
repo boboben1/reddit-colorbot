@@ -1,16 +1,14 @@
-from gfycat.client import GfycatClient
 import os
 import praw
 from praw.exceptions import APIException
 import traceback
 import shutil
-import time
 import re
 import hashlib
 import redis
 import prawcore
-from openload import OpenLoad
-import uuid
+import time
+
 
 
 # ####################### #
@@ -20,7 +18,7 @@ import uuid
 import secret
 from scrapeVid import search_and_download_video
 from stabVid import stab_file
-import stabVid
+import vidUpload
 
 
 # ####################### #
@@ -49,56 +47,6 @@ def post_reply(reply_md, mention):
             raise e
 
 
-def upload_file_gfycat(locale_file_name):
-    print("upload_file...")
-    if dryrun:
-        return "https://gfycat.com/FamiliarSimplisticAegeancat"
-
-    for uplodad_it in range(0, gfycat_max_retry):
-        try:
-            file_info = gfyclient.upload_from_file(locale_file_name)
-        except Exception as e:
-            print "Exception:" + str(e) + str(e.message)
-            time.sleep(gfycat_error_retry_sleep_s)
-            continue
-
-        local_md5 = hashlib.md5(open(locale_file_name, 'rb').read()).hexdigest()
-        for query_it in range(0, 3):
-            if 'md5' not in file_info:
-                print("md5 is not yet ready. So pause and try again")
-                time.sleep(gfycat_md5_retry_sleep_s)
-                file_info = gfyclient.query_gfy(file_info['gfyName'])['gfyItem']
-                continue
-
-            if local_md5 != file_info['md5']:
-                print "hash mismatch. local_md5: " + local_md5 + "  remote_md5: " + file_info['md5']
-                print "uploading again..."
-                time.sleep(gfycat_md5_retry_sleep_s)
-                break
-
-            file_path = "https://gfycat.com/" + file_info['gfyName']
-            with open(gfylinks_path, "a") as f:
-                f.write(file_path + "\n")
-
-            return file_path
-    raise RuntimeError("could not upload file")
-
-
-def upload_file_openload(locale_file_name):
-    upload_resp = openload.upload_file(locale_file_name)
-    return "https://openload.co/embed/" + upload_resp[u'id']
-
-def upload_file(locale_file_name):
-    # need unique filename for openload
-    oldext = os.path.splitext(locale_file_name)[1]
-    newName = str(uuid.uuid4()) + oldext
-    os.rename(locale_file_name, newName)
-    try:
-        return upload_file_openload(newName)
-    except Exception as e:
-        print "openload-error: ", e.__class__, e.__doc__, e.message
-        return upload_file_gfycat(newName)
-
 
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
@@ -113,10 +61,6 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process "\
                         "and " +  "%.f" % upload_time + " seconds to upload.\n"
 
-    addional_note = "\nI'm sending this to you as a PM, because I have trouble with \
-    my original video-hoster and reddit does not allow comments containing links to openload.co. \
-    Updates on this issue will be posted [here](https://www.reddit.com/r/stabbot/comments/7clfl1/openload_instead_of_gfycat/)\n"
-
     foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]"\
                 "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)"\
                 "&nbsp;|&nbsp;[programmer](https://www.reddit.com/message/compose/?to=wotanii)"\
@@ -125,7 +69,6 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
                 "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop"\
 
     return nsfw_note\
-        + addional_note\
         + result_note\
         + time_note\
         + "___\n"\
@@ -187,7 +130,7 @@ def main():
             if(cached_result is None):
                 stab_file(input_path, "stabilized.mp4")
                 proc_time = time.time() - start_time
-                uploaded_url = upload_file('stabilized.mp4')
+                uploaded_url = vidUploader('stabilized.mp4', mention.submission.over_18)
                 set_cache(uploaded_url, input_path)
                 upload_time = time.time() - start_time - proc_time
             else:
@@ -197,7 +140,7 @@ def main():
 
             reply_md = generate_reply(uploaded_url, proc_time, upload_time, mention.submission.over_18, cached_result is not None)
 
-            if False:
+            if True:
                 post_reply(reply_md, mention)
             else:
                 # "temporary" workaround
@@ -235,23 +178,24 @@ reddit = praw.Reddit('my_bot',
 
 print("reddit user: " + reddit.user.me().name)
 
-gfyclient = GfycatClient()
+sleep_time_s = 10
 
 posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
-gfylinks_path = os.path.abspath("data/gfylinks.txt")
 
 r = redis.Redis(
     host='redis',
     port=6379,
     password='')
 
-openload = OpenLoad(secret.openload_id, secret.openload_api_key)
-print("openload: " + str(openload.account_info()))
 
 dryrun = s2b(os.getenv('DRYRUN'), True)
 dryrun = False
 debug = s2b(os.getenv('DEBUG'), False)
+
 include_old_mentions = s2b(os.getenv('INCLUDE_OLD_MENTIONS'), False)
+
+
+vidUploader = vidUpload.vidUpload(user_agent, debug, dryrun)
 
 print("config:"
       "\n\tdryrun: " + str(dryrun)
@@ -260,10 +204,6 @@ print("config:"
 
 woring_path = os.path.abspath("data/working")
 
-sleep_time_s = 10
-gfycat_md5_retry_sleep_s = 15
-gfycat_error_retry_sleep_s = 300
-gfycat_max_retry = 20
 
 # ####################### #
 # ## excecution ######### #
