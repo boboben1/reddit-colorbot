@@ -104,7 +104,7 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
     result_note = "\nI have stabilized the video for you: " \
-                  + uploaded_url.replace("https://openload.co","http://openload.wotanii.de") \
+                  + uploaded_url.replace("https://openload.co","https\://openload.co") \
                   + "\n"
 
     if cache_hit:
@@ -146,7 +146,7 @@ def get_next_job():
         if not dryrun:
             mention.mark_read()
         else:
-            print("bbb _ dryrun: " + str(dryrun))
+            print("dryrun: " + str(dryrun))
 
         return mention
 
