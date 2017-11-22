@@ -10,7 +10,6 @@ import prawcore
 import time
 
 
-
 # ####################### #
 # ## local imports ###### #
 # ####################### #
@@ -112,6 +111,7 @@ def send_message(redditor, text):
     redditor.message('Video is stabilized', text)
     pass
 
+
 def assume_over_18(mention):
     if mention.submission.over_18:
         return True
@@ -174,43 +174,36 @@ def s2b(s,default):
     if s == "False": return False
     raise ValueError("string must be empty, True or False.")
 
+
 # ####################### #
 # ## global constants ### #
 # ####################### #
 
 user_agent = "ubuntu:de.wotanii.stabbot:v0.1 (by /u/wotanii)"
+sleep_time_s = 10
+dryrun = s2b(os.getenv('DRYRUN'), True)
+debug = s2b(os.getenv('DEBUG'), False)
+include_old_mentions = s2b(os.getenv('INCLUDE_OLD_MENTIONS'), False)
+woring_path = os.path.abspath("data/working")
+
+vidUploader = vidUpload.vidUpload(user_agent, debug, dryrun)
 
 reddit = praw.Reddit('my_bot',
                      client_id=secret.reddit_client_id,
                      client_secret=secret.reddit_client_secret,
                      password=secret.reddit_password,
                      user_agent=user_agent)
-
 print("reddit user: " + reddit.user.me().name)
-
-sleep_time_s = 10
-
-posts_replied_to_path = os.path.abspath("data/posts_replied_to.txt")
 
 r = redis.Redis(
     host='redis',
     port=6379,
     password='')
 
-
-dryrun = s2b(os.getenv('DRYRUN'), True)
-debug = s2b(os.getenv('DEBUG'), False)
-include_old_mentions = s2b(os.getenv('INCLUDE_OLD_MENTIONS'), False)
-
-
-vidUploader = vidUpload.vidUpload(user_agent, debug, dryrun)
-
 print("config:"
       "\n\tdryrun: " + str(dryrun)
       + "\n\tdebug: " + str(debug)
       + "\n\told_mentions: " + str(include_old_mentions))
-
-woring_path = os.path.abspath("data/working")
 
 
 # ####################### #
