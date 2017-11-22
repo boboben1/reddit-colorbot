@@ -25,8 +25,8 @@ class vidUpload(object):
         self.gfycat_error_retry_sleep_s = 300
         self.gfycat_max_retry = 20
 
-        self.dryrun = True
-        self.debug = False
+        self.dryrun = dryrun
+        self.debug = debug
 
         self.openload = OpenLoad(secret.openload_id, secret.openload_api_key)
         print("openload: " + str(self.openload.account_info()))
@@ -42,6 +42,7 @@ class vidUpload(object):
         print("upload_file...")
         if self.dryrun:
             return "https://gfycat.com/FamiliarSimplisticAegeancat"
+
 
         for uplodad_it in range(0, self.gfycat_max_retry):
             try:

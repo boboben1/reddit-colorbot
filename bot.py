@@ -112,6 +112,13 @@ def send_message(redditor, text):
     redditor.message('Video is stabilized', text)
     pass
 
+def assume_over_18(mention):
+    if mention.submission.over_18:
+        return True
+
+    if mention.subreddit.subscribers < 500:
+        return True
+
 
 def main():
     print "starting..."
@@ -123,6 +130,7 @@ def main():
                 time.sleep(sleep_time_s)
                 continue
             print "submission: " + mention.submission.id + " - " + mention.submission.shortlink
+            over_18 = assume_over_18(mention)
             start_time = time.time()
 
             input_path = search_and_download_video(mention.submission, user_agent)
@@ -130,7 +138,7 @@ def main():
             if(cached_result is None):
                 stab_file(input_path, "stabilized.mp4")
                 proc_time = time.time() - start_time
-                uploaded_url = vidUploader('stabilized.mp4', mention.submission.over_18)
+                uploaded_url = vidUploader('stabilized.mp4', over_18)
                 set_cache(uploaded_url, input_path)
                 upload_time = time.time() - start_time - proc_time
             else:
@@ -138,7 +146,7 @@ def main():
                 proc_time = 0
                 upload_time = 0
 
-            reply_md = generate_reply(uploaded_url, proc_time, upload_time, mention.submission.over_18, cached_result is not None)
+            reply_md = generate_reply(uploaded_url, proc_time, upload_time, over_18, cached_result is not None)
 
             if True:
                 post_reply(reply_md, mention)
@@ -189,9 +197,7 @@ r = redis.Redis(
 
 
 dryrun = s2b(os.getenv('DRYRUN'), True)
-dryrun = False
 debug = s2b(os.getenv('DEBUG'), False)
-
 include_old_mentions = s2b(os.getenv('INCLUDE_OLD_MENTIONS'), False)
 
 
