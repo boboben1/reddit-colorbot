@@ -116,6 +116,9 @@ def assume_over_18(mention):
     if mention.submission.over_18:
         return True
 
+    if mention.subreddit_name_prefixed == 'r/stabbot':
+        return False
+
     if mention.subreddit.subscribers < 500:
         return True
 
