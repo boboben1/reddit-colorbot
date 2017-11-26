@@ -50,9 +50,13 @@ def post_reply(reply_md, mention):
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
-    result_note = "\nI have stabilized the video for you: " \
-                  + uploaded_url.replace("https://openload.co","https\://openload.co") \
-                  + "\n"
+    if "https://openload.co" in uploaded_url:
+        result_note = "\nI have stabilized the video for you: " \
+                      + uploaded_url.replace("https://openload.co", "https\://openload.co") \
+                      + " (this link works, it's just not clickable. Copy&paste it into your adress bar)\n"
+    else:
+        result_note = "\nI have stabilized the video for you: " \
+                  + uploaded_url + "\n"
 
     if cache_hit:
         time_note = ""
