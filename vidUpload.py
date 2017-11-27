@@ -25,6 +25,11 @@ class vidUpload(object):
         self.gfyclient = GfycatClient()
         self.client_streamable = StreamableApi(secret.streamable_user, secret.streamable_pass)
 
+        self.ixny = {
+            'host':secret.ixni_host,
+            'user':secret.ixni_user,
+            'pass':secret.ixni_pass}
+
     def __call__(self, file_name, over_18):
         return self.upload_file(file_name, over_18)
 
@@ -32,7 +37,8 @@ class vidUpload(object):
         raise NotImplementedError("gfycat")
 
     def upload_file_openload(self, locale_file_name):
-        return upload_file_insxnity(locale_file_name)
+        upload_resp = self.openload.upload_file(locale_file_name)
+        return "https://openload.co/embed/" + upload_resp[u'id']
 
     def upload_file_streamable(self, locale_file_name, over_18):
         if over_18:
@@ -40,10 +46,14 @@ class vidUpload(object):
 
         result = self.client_streamable.upload_video(locale_file_name, 'stable video')
         return 'https://streamable.com/' + result['shortcode']
+
     def upload_file_insxnity(self, locale_file_name):
 
-        srv = pysftp.Connection(host="www.insxnity.net/imagehostlinkhere", username="rooooot",
-        password="password")
+        srv = pysftp.Connection(
+            host=self.ixny['host'],
+            username=self.ixny['user'],
+            password=self.ixny['pass']
+        )
 
         with srv.cd('/var/www/html/stabhost'): #chdir to public
             srv.put(locale_file_name) #upload file to nodejs/
@@ -66,6 +76,11 @@ class vidUpload(object):
             return self.upload_file_gfycat(newName)
         except Exception as e:
             print "gfycat-error: ", e.__class__, e.__doc__, e.message
+
+        try:
+            return self.upload_file_insxnity(newName)
+        except Exception as e:
+            print "insxnity-error: ", e.__class__, e.__doc__, e.message
 
         try:
             return self.upload_file_openload(newName)
