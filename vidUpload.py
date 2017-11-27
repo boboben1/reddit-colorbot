@@ -1,7 +1,6 @@
-
-
 import os
 import uuid
+import pysftp
 
 from openload import OpenLoad
 from gfycat.client import GfycatClient
@@ -26,6 +25,11 @@ class vidUpload(object):
         self.gfyclient = GfycatClient()
         self.client_streamable = StreamableApi(secret.streamable_user, secret.streamable_pass)
 
+        self.ixny = {
+            'host':secret.ixni_host,
+            'user':secret.ixni_user,
+            'pass':secret.ixni_pass}
+
     def __call__(self, file_name, over_18):
         return self.upload_file(file_name, over_18)
 
@@ -43,6 +47,20 @@ class vidUpload(object):
         result = self.client_streamable.upload_video(locale_file_name, 'stable video')
         return 'https://streamable.com/' + result['shortcode']
 
+    def upload_file_insxnity(self, locale_file_name):
+
+        srv = pysftp.Connection(
+            host=self.ixny['host'],
+            username=self.ixny['user'],
+            password=self.ixny['pass']
+        )
+
+        with srv.cd('/var/www/html/stabhost'): #chdir to public
+            srv.put(locale_file_name) #upload file to nodejs/
+
+        srv.close()
+        return "http://stabbot.insxnity.net/stabhost/" + os.path.basename(locale_file_name)
+        
     def upload_file(self, locale_file_name, over_18):
         # need unique filename for openload
         oldext = os.path.splitext(locale_file_name)[1]
@@ -58,6 +76,11 @@ class vidUpload(object):
             return self.upload_file_gfycat(newName)
         except Exception as e:
             print "gfycat-error: ", e.__class__, e.__doc__, e.message
+
+        try:
+            return self.upload_file_insxnity(newName)
+        except Exception as e:
+            print "insxnity-error: ", e.__class__, e.__doc__, e.message
 
         try:
             return self.upload_file_openload(newName)
