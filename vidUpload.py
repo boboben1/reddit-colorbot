@@ -25,10 +25,13 @@ class vidUpload(object):
         self.gfyclient = GfycatClient()
         self.client_streamable = StreamableApi(secret.streamable_user, secret.streamable_pass)
 
+        cnopts = pysftp.CnOpts()
+        cnopts.hostkeys = None  # disable host key checking.
         self.ixny = {
             'host':secret.ixni_host,
             'user':secret.ixni_user,
-            'pass':secret.ixni_pass}
+            'pass':secret.ixni_pass,
+            'cnopts':cnopts}
 
     def __call__(self, file_name, over_18):
         return self.upload_file(file_name, over_18)
@@ -52,7 +55,8 @@ class vidUpload(object):
         srv = pysftp.Connection(
             host=self.ixny['host'],
             username=self.ixny['user'],
-            password=self.ixny['pass']
+            password=self.ixny['pass'],
+            cnopts=self.ixny['cnopts']
         )
 
         with srv.cd('/var/www/html/stabhost'): #chdir to public
