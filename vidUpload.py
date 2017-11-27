@@ -1,7 +1,7 @@
 
-
 import os
 import uuid
+import pysftp
 
 from openload import OpenLoad
 from gfycat.client import GfycatClient
@@ -33,8 +33,7 @@ class vidUpload(object):
         raise NotImplementedError("gfycat")
 
     def upload_file_openload(self, locale_file_name):
-        upload_resp = self.openload.upload_file(locale_file_name)
-        return "https://openload.co/embed/" + upload_resp[u'id']
+        return upload_file_insxnity(locale_file_name)
 
     def upload_file_streamable(self, locale_file_name, over_18):
         if over_18:
@@ -42,7 +41,17 @@ class vidUpload(object):
 
         result = self.client_streamable.upload_video(locale_file_name, 'stable video')
         return 'https://streamable.com/' + result['shortcode']
+    def upload_file_insxnity(self, locale_file_name):
 
+        srv = pysftp.Connection(host="www.insxnity.net/imagehostlinkhere", username="rooooot",
+        password="password")
+
+        with srv.cd('public'): #chdir to public
+            srv.put(locale_file_name) #upload file to nodejs/
+
+        srv.close()
+        return "http://stabbot.insxnity.net/stabhost/" + os.path.basename(locale_file_name)
+        
     def upload_file(self, locale_file_name, over_18):
         # need unique filename for openload
         oldext = os.path.splitext(locale_file_name)[1]
