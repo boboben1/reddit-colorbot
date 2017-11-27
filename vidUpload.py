@@ -1,4 +1,3 @@
-
 import os
 import uuid
 import pysftp
@@ -46,7 +45,7 @@ class vidUpload(object):
         srv = pysftp.Connection(host="www.insxnity.net/imagehostlinkhere", username="rooooot",
         password="password")
 
-        with srv.cd('public'): #chdir to public
+        with srv.cd('/var/www/html/stabhost'): #chdir to public
             srv.put(locale_file_name) #upload file to nodejs/
 
         srv.close()
