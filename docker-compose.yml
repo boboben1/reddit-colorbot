@@ -10,6 +10,7 @@ services:
       - DEBUG=False
       - DRYRUN=False
       - INCLUDE_OLD_MENTIONS=False
+    restart: always
 
   redis:
     image: redis
@@ -17,3 +18,4 @@ services:
      - ./data/redis:/data
     expose:
      - 6379
+    restart: always
