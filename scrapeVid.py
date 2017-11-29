@@ -6,9 +6,12 @@ from pytube import YouTube
 import os
 import pyimgur
 import secret
-from stabVid import VideoBrokenException, max_video_length_seconds
+from stabVid import VideoBrokenException
 
 # todo: turn this module into a proper class
+
+# todo: get this from outside
+max_video_length_seconds = 240
 
 
 imgur = pyimgur.Imgur(secret.imgur_id)

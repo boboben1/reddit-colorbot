@@ -47,7 +47,6 @@ def post_reply(reply_md, mention):
             raise e
 
 
-
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
@@ -97,6 +96,7 @@ def get_next_job():
 
         return mention
 
+
 def check_cache(input_path):
     input_md5 = hashlib.md5(open(input_path, 'rb').read()).hexdigest()
     return r.get("md5-" + input_md5)
@@ -145,7 +145,7 @@ def main():
 
             input_path = search_and_download_video(mention.submission, user_agent)
             cached_result = check_cache(input_path)
-            if(cached_result is None):
+            if cached_result is None:
                 stabilizer(input_path, "stabilized.mp4")
                 proc_time = time.time() - start_time
                 uploaded_url = vidUploader('stabilized.mp4', over_18)

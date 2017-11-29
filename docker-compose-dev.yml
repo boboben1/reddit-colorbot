@@ -9,7 +9,7 @@ services:
     environment:
       - DEBUG=True
       - DRYRUN=True
-      - INCLUDE_OLD_MENTIONS=False
+      - INCLUDE_OLD_MENTIONS=True
 
   redis:
     image: redis

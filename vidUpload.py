@@ -71,6 +71,9 @@ class vidUpload(object):
         newName = str(uuid.uuid4()) + oldext
         os.rename(locale_file_name, newName)
 
+        if self.dryrun:
+            return "https://streamable.com/swt6z"
+
         try:
             return self.upload_file_streamable(newName, over_18)
         except Exception as e:
