@@ -17,8 +17,12 @@ import time
 import secret
 from scrapeVid import search_and_download_video
 from stabVid import StabVid
+from stabVid import VideoBrokenException
+from stabVid import VideoStabilisingException
+
 import vidUpload
 from helper import s2b
+
 
 
 # ####################### #
@@ -167,7 +171,11 @@ def main():
         except prawcore.exceptions.Forbidden:
             print("Error: prawcore.exceptions.Forbidden")
             send_message(mention.author, "I could not reply to [your comment]("+str(mention.context)+"), because I have been banned in this community. \n___\n" + reply_md)
-
+        except VideoBrokenException as e:
+            print("Error: VideoBrokenException")
+            send_message(mention.author,
+                         "There was something wrong with [your request]("+str(mention.context)
+                         +"): \n\n" + e.message )
 
         except Exception as e:
             print "Exception:"

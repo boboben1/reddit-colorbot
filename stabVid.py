@@ -39,7 +39,7 @@ class StabVid(object):
         if len(metadata.video) > 1:
             raise VideoBrokenException("Video may not contain multiple video streams")
         if len(metadata.video) < 1:
-            raise VideoBrokenException("Video contains no video streams")
+            raise VideoBrokenException("No video streams found in file")
 
         could_check_dur_initially = self.check_vid_duration(input_path)
 
