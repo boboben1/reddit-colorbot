@@ -22,7 +22,7 @@ class StabVid(object):
                  max_video_length_seconds = 240):
         self.max_video_length_seconds = max_video_length_seconds
         self.ffmpeg_full_path = ffmpeg_full_path
-        self.video_scale_factor =  video_scale_factor
+        self.video_scale_factor = video_scale_factor
         self.video_zoom_factor = video_zoom_factor
 
     def __call__(self, input_path, output_path):
