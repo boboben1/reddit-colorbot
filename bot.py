@@ -16,8 +16,9 @@ import time
 
 import secret
 from scrapeVid import search_and_download_video
-from stabVid import stab_file
+from stabVid import StabVid
 import vidUpload
+from helper import s2b
 
 
 # ####################### #
@@ -145,7 +146,7 @@ def main():
             input_path = search_and_download_video(mention.submission, user_agent)
             cached_result = check_cache(input_path)
             if(cached_result is None):
-                stab_file(input_path, "stabilized.mp4")
+                stabilizer(input_path, "stabilized.mp4")
                 proc_time = time.time() - start_time
                 uploaded_url = vidUploader('stabilized.mp4', over_18)
                 set_cache(uploaded_url, input_path)
@@ -175,13 +176,6 @@ def main():
             traceback.print_exc()
 
 
-def s2b(s,default):
-    if not s: return default
-    if s == "True": return True
-    if s == "False": return False
-    raise ValueError("string must be empty, True or False.")
-
-
 # ####################### #
 # ## global constants ### #
 # ####################### #
@@ -206,6 +200,8 @@ r = redis.Redis(
     host='redis',
     port=6379,
     password='')
+
+stabilizer = StabVid()
 
 print("config:"
       "\n\tdryrun: " + str(dryrun)
