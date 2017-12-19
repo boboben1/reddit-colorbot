@@ -112,13 +112,13 @@ def set_cache(uploaded_url, input_path):
 
 
 def send_message(redditor, text):
-    print("sending PM to " + redditor.name)
-    if dryrun:
-        print("message would be: " + text)
-        return
-
-    redditor.message('Video is stabilized', text)
-    pass
+    print("not sending PM, because ban")
+    return
+    # print("sending PM to " + redditor.name)
+    # if dryrun:
+    #    print("message would be: " + text)
+    #    return
+    # redditor.message('Video is stabilized', text)
 
 
 def assume_over_18(mention):
