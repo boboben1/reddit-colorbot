@@ -1,6 +1,7 @@
 import os
 import praw
 from praw.exceptions import APIException
+from praw.exceptions import RequestException
 import traceback
 import shutil
 import re
@@ -24,7 +25,6 @@ import vidUpload
 from helper import s2b
 
 
-
 # ####################### #
 # ## functions ########## #
 # ####################### #
@@ -35,20 +35,26 @@ def post_reply(reply_md, mention):
         print "reply would be:" + reply_md
         return
 
-    try:
-        mention.reply(reply_md)
-    except APIException as e:
-        if e.error_type == 'RATELIMIT':
-            print "I was posting too fast. Error-Message: " + e.message
-            wait_time_m = int(re.search(r'\d+', e.message).group()) + 1
-            if wait_time_m > 10:
-                wait_time_m = 10
-            print "going to sleep for " + str(wait_time_m) + " minutes."
-            time.sleep(wait_time_m * 60)
+    for i in range(0, 5):
+        try:
             mention.reply(reply_md)
+            return
 
-        else:
-            raise e
+        except RequestException:
+            print "RequestException... trying again"
+
+        except APIException as e:
+            if e.error_type == 'RATELIMIT':
+                print "I was posting too fast. Error-Message: " + e.message
+                wait_time_m = int(re.search(r'\d+', e.message).group()) + 1
+                if wait_time_m > 10:
+                    wait_time_m = 10
+                print "going to sleep for " + str(wait_time_m) + " minutes."
+                time.sleep(wait_time_m * 60)
+                mention.reply(reply_md)
+            else:
+                raise e
+    print "post_reply... failed"
 
 
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
