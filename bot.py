@@ -50,7 +50,6 @@ def post_reply(reply_md, mention):
                     wait_time_m = 10
                 print "going to sleep for " + str(wait_time_m) + " minutes."
                 time.sleep(wait_time_m * 60)
-                mention.reply(reply_md)
             else:
                 raise e
     print "post_reply... failed"
