@@ -1,7 +1,6 @@
 import os
 import praw
 from praw.exceptions import APIException
-from praw.exceptions import RequestException
 import traceback
 import shutil
 import re
@@ -40,7 +39,7 @@ def post_reply(reply_md, mention):
             mention.reply(reply_md)
             return
 
-        except RequestException:
+        except prawcore.exceptions.RequestException:
             print "RequestException... trying again"
 
         except APIException as e:
