@@ -38,12 +38,12 @@ def extract_video_url_from_page(page_url):
 
         video_src = None
         try:
-            video_src = soup.source.src
+            video_src = soup.source["src"]
         except AttributeError:
             pass
         if not video_src:
             try:
-                video_src = soup.video.src
+                video_src = soup.video["src"]
             except AttributeError:
                 pass
 
