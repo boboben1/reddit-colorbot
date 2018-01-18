@@ -9,7 +9,6 @@ import redis
 import prawcore
 import time
 
-
 # ####################### #
 # ## local imports ###### #
 # ####################### #
@@ -64,26 +63,26 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
                       + " (this link works, it's just not clickable. Copy&paste it into your adress bar)\n"
     else:
         result_note = "\nI have stabilized the video for you: " \
-                  + uploaded_url + "\n"
+                      + uploaded_url + "\n"
 
     if cache_hit:
         time_note = ""
     else:
-        time_note = "\nIt took " + "%.f" % proc_time + " seconds to process "\
-                        "and " +  "%.f" % upload_time + " seconds to upload.\n"
+        time_note = "\nIt took " + "%.f" % proc_time + " seconds to process " \
+                                                       "and " + "%.f" % upload_time + " seconds to upload.\n"
 
-    foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]"\
-                "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)"\
-                "&nbsp;|&nbsp;[programmer](https://www.reddit.com/message/compose/?to=wotanii)"\
-                "&nbsp;|&nbsp;[source&nbsp;code](https://gitlab.com/wotanii/stabbot)"\
-                "&nbsp;|&nbsp;/r/ImageStabilization/"\
-                "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop"\
-
-    return nsfw_note\
-        + result_note\
-        + time_note\
-        + "___\n"\
-        + foot_note
+    foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]" \
+                "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)" \
+                "&nbsp;|&nbsp;[programmer](https://www.reddit.com/message/compose/?to=wotanii)" \
+                "&nbsp;|&nbsp;[source&nbsp;code](https://gitlab.com/wotanii/stabbot)" \
+                "&nbsp;|&nbsp;/r/ImageStabilization/" \
+                "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop" \
+ \
+            return nsfw_note \
+                   + result_note \
+                   + time_note \
+                   + "___\n" \
+                   + foot_note
 
 
 def clear_env():
@@ -115,14 +114,38 @@ def set_cache(uploaded_url, input_path):
     r.set("md5-" + input_md5, uploaded_url)
 
 
-def send_message(redditor, text):
-    print("not sending PM, because ban")
-    return
-    # print("sending PM to " + redditor.name)
-    # if dryrun:
-    #    print("message would be: " + text)
-    #    return
-    # redditor.message('Video is stabilized', text)
+def get_message_submission(over_18):
+    subr = reddit.subreddit('stabbot')
+
+    submission_name = message_submission_name
+    if over_18:
+        submission_name = submission_name + " - NSFW"
+    candidates = subr.search(submission_name, sort="new", time_filter="week")
+
+    for c in candidates:
+        if c.over_18 != over_18:
+            pass
+        if c.author.name == me:
+            return c
+
+    s = subr.submit(submission_name, send_replies=False, selftext="""
+    This thread is used by stabbot&co to reply to summons 
+    """)
+    s.distinguish()
+    if over_18:
+        s.nsfw()
+
+    return s
+
+
+def send_message(mention, text):
+    text = "pinging /u/" + mention.author.name + "\n\n" + text
+    if dryrun:
+        print("message would be: " + text)
+        return
+
+    s = get_message_submission(assume_over_18(mention))
+    s.reply(text)
 
 
 def assume_over_18(mention):
@@ -141,6 +164,7 @@ def assume_over_18(mention):
 def main():
     print "starting..."
     while True:
+        reply_md = ""
         try:
             clear_env()
             mention = get_next_job()
@@ -170,16 +194,16 @@ def main():
                 post_reply(reply_md, mention)
             else:
                 # "temporary" workaround
-                send_message(mention.author, reply_md)
+                send_message(reply_md, mention)
 
         except prawcore.exceptions.Forbidden:
             print("Error: prawcore.exceptions.Forbidden")
-            send_message(mention.author, "I could not reply to [your comment]("+str(mention.context)+"), because I have been banned in this community. \n___\n" + reply_md)
+            send_message("I could not reply to [your comment](" + str(
+                mention.context) + "), because I have been banned in this community. \n___\n" + reply_md, mention)
         except VideoBrokenException as e:
             print("Error: VideoBrokenException")
-            send_message(mention.author,
-                         "There was something wrong with [your request]("+str(mention.context)
-                         +"): \n\n" + e.message )
+            send_message("There was something wrong with [your request](" + str(mention.context)
+                         + "): \n\n" + e.message, mention)
 
         except Exception as e:
             print "Exception:"
@@ -187,12 +211,15 @@ def main():
             print e
             traceback.print_exc()
 
+            send_message("Something very unexpected happened. [your request](" + str(mention.context)
+                         + "): \n\n" + e.__class__ + e.__doc__ + e.message, mention)
+
 
 # ####################### #
 # ## global constants ### #
 # ####################### #
 
-user_agent = "ubuntu:de.wotanii.stabbot:v0.1 (by /u/wotanii)"
+user_agent = "ubuntu:de.wotanii.stabbot:v0.3 (by /u/wotanii)"
 sleep_time_s = 10
 dryrun = s2b(os.getenv('DRYRUN'), True)
 debug = s2b(os.getenv('DEBUG'), False)
@@ -208,6 +235,9 @@ reddit = praw.Reddit('my_bot',
                      user_agent=user_agent)
 print("reddit user: " + reddit.user.me().name)
 
+me = reddit.user.me().name
+message_submission_name = "replies_from_" + me
+
 r = redis.Redis(
     host='redis',
     port=6379,
@@ -219,7 +249,6 @@ print("config:"
       "\n\tdryrun: " + str(dryrun)
       + "\n\tdebug: " + str(debug)
       + "\n\told_mentions: " + str(include_old_mentions))
-
 
 # ####################### #
 # ## excecution ######### #

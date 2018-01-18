@@ -1,4 +1,4 @@
-FROM ubuntu:zesty
+FROM ubuntu:artful
 
 ENV cache_breaker "2018-01-17"
 
