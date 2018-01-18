@@ -69,20 +69,20 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = ""
     else:
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process " \
-                                                       "and " + "%.f" % upload_time + " seconds to upload.\n"
+                    + "and " + "%.f" % upload_time + " seconds to upload.\n"
 
     foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]" \
                 "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)" \
                 "&nbsp;|&nbsp;[programmer](https://www.reddit.com/message/compose/?to=wotanii)" \
                 "&nbsp;|&nbsp;[source&nbsp;code](https://gitlab.com/wotanii/stabbot)" \
                 "&nbsp;|&nbsp;/r/ImageStabilization/" \
-                "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop" \
- \
-            return nsfw_note \
-                   + result_note \
-                   + time_note \
-                   + "___\n" \
-                   + foot_note
+                "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop"
+
+    return nsfw_note \
+           + result_note \
+           + time_note \
+           + "___\n" \
+           + foot_note
 
 
 def clear_env():
@@ -131,9 +131,9 @@ def get_message_submission(over_18):
     s = subr.submit(submission_name, send_replies=False, selftext="""
     This thread is used by stabbot&co to reply to summons 
     """)
-    s.distinguish()
+    s.mod.distinguish()
     if over_18:
-        s.nsfw()
+        s.mod.nsfw()
 
     return s
 
@@ -145,6 +145,7 @@ def send_message(mention, text):
         return
 
     s = get_message_submission(assume_over_18(mention))
+    print("replying...")
     s.reply(text)
 
 
@@ -194,16 +195,16 @@ def main():
                 post_reply(reply_md, mention)
             else:
                 # "temporary" workaround
-                send_message(reply_md, mention)
+                send_message(mention, reply_md)
 
         except prawcore.exceptions.Forbidden:
             print("Error: prawcore.exceptions.Forbidden")
-            send_message("I could not reply to [your comment](" + str(
-                mention.context) + "), because I have been banned in this community. \n___\n" + reply_md, mention)
+            send_message(mention, "I could not reply to [your comment](" + str(
+                mention.context) + "), because I have been banned in this community. \n___\n" + reply_md)
         except VideoBrokenException as e:
             print("Error: VideoBrokenException")
-            send_message("There was something wrong with [your request](" + str(mention.context)
-                         + "): \n\n" + e.message, mention)
+            send_message(mention, "There was something wrong with [your request](" + str(mention.context)
+                         + "): \n\n" + e.message)
 
         except Exception as e:
             print "Exception:"
@@ -211,8 +212,8 @@ def main():
             print e
             traceback.print_exc()
 
-            send_message("Something very unexpected happened. [your request](" + str(mention.context)
-                         + "): \n\n" + e.__class__ + e.__doc__ + e.message, mention)
+            send_message(mention, "Something broke inside. [your request](" + str(mention.context)
+                         + ").")
 
 
 # ####################### #

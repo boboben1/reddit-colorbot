@@ -35,12 +35,19 @@ def extract_video_url_from_page(page_url):
     info = response.info()
     if info.type == "text/html":
         soup = BeautifulSoup(response, "html.parser")
-        source_tag = None
-        if hasattr(soup, 'source'):
-            source_tag = soup.source
-        elif hasattr(soup, 'video'):
-            source_tag = soup.video
-        else:
+
+        video_src = None
+        try:
+            video_src = soup.source.src
+        except AttributeError:
+            pass
+        if not video_src:
+            try:
+                video_src = soup.video.src
+            except AttributeError:
+                pass
+
+        if not video_src:
             raise VideoNotFoundException("No Video found at " + page_url)
 
         video_src = source_tag['src']
