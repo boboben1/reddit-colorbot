@@ -7,6 +7,7 @@ import os
 import pyimgur
 import secret
 from stabVid import VideoBrokenException
+import json
 
 # todo: turn this module into a proper class
 
@@ -52,14 +53,20 @@ def extract_video_url_from_page(page_url):
 
         if video_src.startswith("//"):
             video_src = "http:" + video_src
-        video_type = source_tag['type']  # "video/mp4"
-        if video_type is None:
-            print "Warning: No Video type: "
-        if not video_type.startswith("video"):
-            raise VideoNotFoundException("Found File has wrong type. Found:"
-                                         + video_type + ", Expected: video")
+
         return video_src
     return None
+
+
+def get_streamable_url(url):
+    parsed_uri = urlparse.urlparse(url)
+    info_url = "https://api.streamable.com/videos" + parsed_uri.path
+    response = urllib.urlopen(info_url)
+    j = json.load(response)
+    video_url = j['files']['mp4']['url']
+    if video_url.startswith("//"):
+        video_url = "https:" + video_url
+    return video_url
 
 
 def search_and_download_video(submission, new_user_agent):
@@ -90,6 +97,10 @@ def search_and_download_video(submission, new_user_agent):
         yt = YouTube(submission_url)
         # get highest mp4 video and hope there is at least one.
         return download_file(yt.streams.filter(subtype='mp4').first().url)
+
+    if parsed_uri.netloc.endswith(".streamable.com") or parsed_uri.netloc == "streamable.com":
+        return download_file(get_streamable_url(submission_url))
+
     if parsed_uri.netloc.endswith(".imgur.com") or parsed_uri.netloc == "imgur.com":
 
         if parsed_uri.path.endswith('.gifv'):
