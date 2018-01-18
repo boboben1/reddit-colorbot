@@ -50,7 +50,6 @@ def extract_video_url_from_page(page_url):
         if not video_src:
             raise VideoNotFoundException("No Video found at " + page_url)
 
-        video_src = source_tag['src']
         if video_src.startswith("//"):
             video_src = "http:" + video_src
         video_type = source_tag['type']  # "video/mp4"
