@@ -55,7 +55,7 @@ def post_reply(reply_md, mention):
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
-    result_note = "\nI have stabilized the video for you: " \
+    result_note = "\nI have colorized the image for you: " \
                     + uploaded_url + "\n"
 
     if cache_hit:
@@ -64,7 +64,7 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process " \
                     + "and " + "%.f" % upload_time + " seconds to upload.\n"
 
-    foot_note = "^^This project is currently in development." #\
+    foot_note = "^^(This project is currently in development.)" #\
                 #"Colorbot costs money to operate." \ 
                 #"Please consider donating to support this project."
 
