@@ -106,7 +106,7 @@ def set_cache(uploaded_url, input_path):
 
 
 def get_message_submission(over_18):
-    subr = reddit.subreddit('colorbot')
+    subr = reddit.subreddit('coloringbot')
 
     submission_name = message_submission_name
     if over_18:
@@ -120,7 +120,7 @@ def get_message_submission(over_18):
             return c
 
     s = subr.submit(submission_name, send_replies=False, selftext="""
-    This thread is used by stabbot&co to reply to summons 
+    This thread is used by coloringbot&co to reply to summons 
     """)
     s.mod.distinguish()
     if over_18:
@@ -144,7 +144,7 @@ def assume_over_18(mention):
     if mention.submission.over_18:
         return True
 
-    if mention.subreddit_name_prefixed == 'r/stabbot':
+    if mention.subreddit_name_prefixed == 'r/coloringbot':
         return False
 
     if mention.subreddit.subscribers < 500:

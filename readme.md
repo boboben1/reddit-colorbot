@@ -12,7 +12,7 @@ a reddit bot, that colorizes photos
 
 ### summoning
 
-Mention /u/colorbot in a top-level comment to a submission.
+Mention /u/coloringbot in a top-level comment to a submission.
 
 The submission must be:
 	* A Black and White Photo
