@@ -42,7 +42,7 @@ class Colorizer(object):
 
         png_path = Path(input_path).with_suffix(".png")
 
-        if not input_path.endsWith(".png"):
+        if not input_path.endswith(".png"):
             im = Image.open(input_path)
             im.save(png_path)
 
