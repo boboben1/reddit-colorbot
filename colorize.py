@@ -47,7 +47,7 @@ class Colorizer(object):
             im.save(png_path)
 
 
-        self.client.file("data://.my/colorbot/uncolorized.png").putFile(png_path)
+        self.client.file("data://.my/colorbot/uncolorized.png").putFile(png_path.name)
 
 
         result = self.algo.pipe({
