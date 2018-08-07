@@ -1,11 +1,11 @@
-version: '2.2'
+version: '2'
 services:
   colorbot:
     build: .
     volumes:
      - ./data:/bot/data
     cpu_count: 1
-    mem_limit: 3G
+    mem_limit: 1G
     environment:
       - DEBUG=False
       - DRYRUN=False
