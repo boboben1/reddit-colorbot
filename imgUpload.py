@@ -31,7 +31,7 @@ class imgUpload(object):
         return self.upload_file(file_name, over_18)
     
     def upload_file_imgur(self, file_name, over_18):
-        return self.imgur.upload_image(file_name, title="Colorized File")
+        return self.imgur.upload_image(file_name, title="Colorized File").link
 
     def upload_file(self, locale_file_name, over_18):
         # need unique filename for openload
