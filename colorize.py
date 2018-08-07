@@ -29,7 +29,6 @@ class Colorizer(object):
     def __init__(self):
         self.client = Algorithmia.client(secret.algo_id)
         self.algo = self.client.algo('deeplearning/ColorfulImageColorization/1.1.13')
-        self.dir = self.client.dir("data://.my/colorbot")
 
     def __call__(self, input_path, output_path):
         return self.colorize_file(input_path, output_path)
@@ -48,7 +47,7 @@ class Colorizer(object):
             im.save(png_path)
 
 
-        self.dir.file("uncolorized.png").putFile(png_path)
+        self.client.file("data://.my/colorbot/uncolorized.png").putFile(png_path)
 
 
         result = self.algo.pipe({
