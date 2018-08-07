@@ -9,3 +9,6 @@ redis
 pyopenload
 pystreamable
 pysftp
+algorithmia
+pillow
+pathlib

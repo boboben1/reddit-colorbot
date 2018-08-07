@@ -6,16 +6,12 @@ from pytube import YouTube
 import os
 import pyimgur
 import secret
-from stabVid import VideoBrokenException
 import json
 
 # todo: turn this module into a proper class
 
-# todo: get this from outside
-max_video_length_seconds = 240
 
-
-imgur = pyimgur.Imgur(secret.imgur_id)
+imgur = pyimgur.Imgur(secret.imgur_client_id)
 
 user_agent = None
 
@@ -28,7 +24,7 @@ class VideoNotFoundException(Exception):
 # ## functions ########## #
 # ####################### #
 
-def extract_video_url_from_page(page_url):
+def extract_image_url_from_page(page_url):
     if page_url is None:
         raise VideoNotFoundException("No Video found. ")
 
@@ -57,54 +53,21 @@ def extract_video_url_from_page(page_url):
         return video_src
     return None
 
-
-def get_streamable_url(url):
-    parsed_uri = urlparse.urlparse(url)
-    info_url = "https://api.streamable.com/videos" + parsed_uri.path
-    response = urllib.urlopen(info_url)
-    j = json.load(response)
-    video_url = j['files']['mp4']['url']
-    if video_url.startswith("//"):
-        video_url = "https:" + video_url
-    return video_url
-
-
-def search_and_download_video(submission, new_user_agent):
+def search_and_download_image(submission, new_user_agent):
     global user_agent
     user_agent= new_user_agent
 
     submission_url = submission.url
     parsed_uri = urlparse.urlparse(submission_url)
 
-    if parsed_uri.path.endswith(('.mp4', '.avi', 'gif', '.webm')):
+    if parsed_uri.path.endswith(('.png', '.jpg', '.jpeg')):
         # this is u direct link
         return download_file(submission_url)
 
-    if hasattr(submission, 'media') and submission.media is not None:
-        # this is video hosted directly on reddit
-        if 'duration' in submission.media:
-            if submission.media.duration > max_video_length_seconds:
-                raise VideoBrokenException("Video too long. Video duration: " + submission.media.duration
-                                           + ", Maximum duration: " + str(max_video_length_seconds) + ". ")
-        if 'fallback_url' in submission.media:
-            return download_file(submission.media['fallback_url'])
-        if 'reddit_video' in submission.media and \
-                'fallback_url' in submission.media['reddit_video']:
-            return download_file(submission.media['reddit_video']['fallback_url'])
-
-    if parsed_uri.netloc.endswith(".youtube.com") \
-            or parsed_uri.netloc.endswith("youtu.be"):
-        yt = YouTube(submission_url)
-        # get highest mp4 video and hope there is at least one.
-        return download_file(yt.streams.filter(subtype='mp4').first().url)
-
-    if parsed_uri.netloc.endswith(".streamable.com") or parsed_uri.netloc == "streamable.com":
-        return download_file(get_streamable_url(submission_url))
-
     if parsed_uri.netloc.endswith(".imgur.com") or parsed_uri.netloc == "imgur.com":
 
-        if parsed_uri.path.endswith('.gifv'):
-            return download_file(extract_video_url_from_page(submission_url))
+        if parsed_uri.path.endswith(('.png', '.jpg', '.jpeg')):
+            return download_file(extract_image_url_from_page(submission_url))
         if parsed_uri.path.startswith('/a/'):
             # album
             response = urllib.urlopen(submission_url)
@@ -114,13 +77,13 @@ def search_and_download_video(submission, new_user_agent):
                 # return first image and hope it's a video
                 return download_file(matches[0]['href'])
             # return first first embedded video if there is any
-            return download_file(extract_video_url_from_page(submission_url))
+            return download_file(extract_image_url_from_page(submission_url))
         if parsed_uri.path.startswith('/gallery/'):
             # gallery
             # return first first embedded video if there is any
-            return download_file(extract_video_url_from_page(submission_url))
+            return download_file(extract_image_url_from_page(submission_url))
 
-        vid_src = extract_video_url_from_page(submission_url)
+        vid_src = extract_image_url_from_page(submission_url)
         if vid_src is not None:
             # this is probably a mobile link to a gifv
             return download_file(vid_src)
@@ -130,7 +93,8 @@ def search_and_download_video(submission, new_user_agent):
         image = imgur.get_image(img_id)
         return download_file(image.link)
 
-    return download_file(extract_video_url_from_page(submission_url))
+    return download_file(extract_image_url_from_page(submission_url))
+
 
 
 def download_file(video_src):
@@ -138,7 +102,7 @@ def download_file(video_src):
     path = urlparse.urlparse(video_src).path
     ext = os.path.splitext(path)[1]
     if not ext:
-        ext = ".mp4"
+        ext = ".png"
     target_path = "input" + ext
     test = urllib.FancyURLopener()
     test.addheaders = [('User-Agent', user_agent)]

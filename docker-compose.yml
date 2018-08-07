@@ -1,6 +1,6 @@
 version: '2.2'
 services:
-  stabbot:
+  colorbot:
     build: .
     volumes:
      - ./data:/bot/data

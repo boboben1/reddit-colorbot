@@ -14,12 +14,10 @@ import time
 # ####################### #
 
 import secret
-from scrapeVid import search_and_download_video
-from stabVid import StabVid
-from stabVid import VideoBrokenException
-from stabVid import VideoStabilisingException
 
-import vidUpload
+from imgUpload import imgUpload
+from scrapeImg import search_and_download_image
+from colorize import Colorizer
 from helper import s2b
 
 
@@ -57,13 +55,8 @@ def post_reply(reply_md, mention):
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
-    if "https://openload.co" in uploaded_url:
-        result_note = "\nI have stabilized the video for you: " \
-                      + uploaded_url.replace("https://openload.co", "https\://openload.co") \
-                      + " (this link works, it's just not clickable. Copy&paste it into your adress bar)\n"
-    else:
-        result_note = "\nI have stabilized the video for you: " \
-                      + uploaded_url + "\n"
+    result_note = "\nI have stabilized the video for you: " \
+                    + uploaded_url + "\n"
 
     if cache_hit:
         time_note = ""
@@ -71,12 +64,10 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process " \
                     + "and " + "%.f" % upload_time + " seconds to upload.\n"
 
-    foot_note = "^^[&nbsp;how&nbsp;to&nbsp;use]" \
-                "(https://www.reddit.com/r/stabbot/comments/72irce/how_to_use_stabbot/)" \
-                "&nbsp;|&nbsp;[programmer](https://www.reddit.com/message/compose/?to=wotanii)" \
-                "&nbsp;|&nbsp;[source&nbsp;code](https://gitlab.com/wotanii/stabbot)" \
-                "&nbsp;|&nbsp;/r/ImageStabilization/" \
-                "&nbsp;|&nbsp;for&nbsp;cropped&nbsp;results,&nbsp;use&nbsp;\/u/stabbot_crop"
+    foot_note = "^^This project is currently in development." #\
+                #"Colorbot costs money to operate." \ 
+                #"Please consider donating to support this project."
+
 
     return nsfw_note \
            + result_note \
@@ -115,7 +106,7 @@ def set_cache(uploaded_url, input_path):
 
 
 def get_message_submission(over_18):
-    subr = reddit.subreddit('stabbot')
+    subr = reddit.subreddit('colorbot')
 
     submission_name = message_submission_name
     if over_18:
@@ -176,12 +167,12 @@ def main():
             over_18 = assume_over_18(mention)
             start_time = time.time()
 
-            input_path = search_and_download_video(mention.submission, user_agent)
+            input_path = search_and_download_image(mention.submission, user_agent)
             cached_result = check_cache(input_path)
             if cached_result is None:
-                stabilizer(input_path, "stabilized.mp4")
+                colorizer(input_path, "colorized.png")
                 proc_time = time.time() - start_time
-                uploaded_url = vidUploader('stabilized.mp4', over_18)
+                uploaded_url = imgUploader('colorized.png', over_18)
                 set_cache(uploaded_url, input_path)
                 upload_time = time.time() - start_time - proc_time
             else:
@@ -201,10 +192,6 @@ def main():
             print("Error: prawcore.exceptions.Forbidden")
             send_message(mention, "I could not reply to [your comment](" + str(
                 mention.context) + "), because I have been banned in this community. \n___\n" + reply_md)
-        except VideoBrokenException as e:
-            print("Error: VideoBrokenException")
-            send_message(mention, "There was something wrong with [your request](" + str(mention.context)
-                         + "): \n\n" + e.message)
 
         except Exception as e:
             print "Exception:"
@@ -220,14 +207,14 @@ def main():
 # ## global constants ### #
 # ####################### #
 
-user_agent = "ubuntu:de.wotanii.stabbot:v0.3 (by /u/wotanii)"
+user_agent = "ubuntu:com.bluudlust.colorbot:v0.1 (by /u/BluudLust)"
 sleep_time_s = 10
 dryrun = s2b(os.getenv('DRYRUN'), True)
 debug = s2b(os.getenv('DEBUG'), False)
 include_old_mentions = s2b(os.getenv('INCLUDE_OLD_MENTIONS'), False)
 woring_path = os.path.abspath("data/working")
 
-vidUploader = vidUpload.vidUpload(user_agent, debug, dryrun)
+imgUploader = imgUpload(user_agent, debug, dryrun)
 
 reddit = praw.Reddit('my_bot',
                      client_id=secret.reddit_client_id,
@@ -244,7 +231,7 @@ r = redis.Redis(
     port=6379,
     password='')
 
-stabilizer = StabVid()
+colorizer = Colorizer()
 
 print("config:"
       "\n\tdryrun: " + str(dryrun)

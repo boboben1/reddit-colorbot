@@ -1,0 +1,6 @@
+# pack-refs with: peeled fully-peeled sorted 
+5337c289c659957c13cb3742ef720843458368c4 refs/heads/cache
+1a7c20f1d9aba5ddb89354bb54d047168b6342f8 refs/heads/crop
+9fe1fd959646bb5ffafb9864acf6ba05374ce645 refs/heads/master
+f71d207bdbbca9607dfb64f00e2e43ce698e61ed refs/heads/openload
+48dd0eb5fcf7e8184aa24ec25d66294e9c45facb refs/heads/tripod
