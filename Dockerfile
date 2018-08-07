@@ -37,9 +37,9 @@ RUN pip install -r requirements.txt
 COPY praw.ini /bot
 COPY bot.py /bot
 COPY secret.py /bot
-COPY scrapeVid.py /bot
-COPY stabVid.py /bot
-COPY vidUpload.py /bot
+COPY scrapeImg.py /bot
+COPY colorize.py /bot
+COPY imgUpload.py /bot
 COPY helper.py /bot
 
 ENV PYTHONUNBUFFERED 0
