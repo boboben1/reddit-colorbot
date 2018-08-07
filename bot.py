@@ -64,7 +64,7 @@ def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
         time_note = "\nIt took " + "%.f" % proc_time + " seconds to process " \
                     + "and " + "%.f" % upload_time + " seconds to upload.\n"
 
-    foot_note = "^^(This project is currently in development.)" #\
+    foot_note = "^(This project is currently in development.)" #\
                 #"Colorbot costs money to operate." \ 
                 #"Please consider donating to support this project."
 
