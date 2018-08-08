@@ -19,6 +19,7 @@ from imgUpload import imgUpload
 from scrapeImg import search_and_download_image
 from colorize import Colorizer
 from helper import s2b
+from superres import SuperRes
 
 
 # ####################### #
@@ -55,7 +56,7 @@ def post_reply(reply_md, mention):
 def generate_reply(uploaded_url, proc_time, upload_time, over_18, cache_hit):
     nsfw_note = "# --- NSFW --- \n\n " if over_18 else ""
 
-    result_note = "\nI have colorized the image for you: " \
+    result_note = "\nI have enhanced the resolution of the image for you: " \
                     + uploaded_url + "\n"
 
     if cache_hit:
@@ -170,9 +171,9 @@ def main():
             input_path = search_and_download_image(mention.submission, user_agent)
             cached_result = check_cache(input_path)
             if cached_result is None:
-                colorizer(input_path, "colorized.png")
+                superres(input_path, "superres.png")
                 proc_time = time.time() - start_time
-                uploaded_url = imgUploader('colorized.png', over_18)
+                uploaded_url = imgUploader('superres.png', over_18)
                 set_cache(uploaded_url, input_path)
                 upload_time = time.time() - start_time - proc_time
             else:
@@ -219,7 +220,7 @@ imgUploader = imgUpload(user_agent, debug, dryrun)
 reddit = praw.Reddit('my_bot',
                      client_id=secret.reddit_client_id,
                      client_secret=secret.reddit_client_secret,
-                     password=secret.reddit_password,
+                     password=secret.reddit_password_superres,
                      user_agent=user_agent)
 print("reddit user: " + reddit.user.me().name)
 
@@ -232,6 +233,7 @@ r = redis.Redis(
     password='')
 
 colorizer = Colorizer()
+superres = SuperRes()
 
 print("config:"
       "\n\tdryrun: " + str(dryrun)

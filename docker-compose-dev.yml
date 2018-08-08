@@ -5,6 +5,7 @@ services:
     volumes:
      - ./data:/bot/data
 #    cpu_count: 1
+    mem_limit: 1G
     environment:
       - DEBUG=True
       - DRYRUN=True
