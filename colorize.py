@@ -69,11 +69,9 @@ class Colorizer(object):
         png_path = Path(input_path).with_suffix(".png")
 
         im = Image.open(input_path)
-        ImageOps.grayscale(im).save(str(png_path.resolve()))
+        ImageOps.grayscale(im).save(str(png_path))
 
-        r = self.request_colorization_openai(str(png_path.resolve()))
-
-        output_url = r.json()["output_url"]
+        output_url = self.request_colorization_openai(str(png_path.resolve()))
 
         test = urllib.FancyURLopener()
         test.addheaders = [('User-Agent', None)]
@@ -89,7 +87,7 @@ class Colorizer(object):
                     'image': open(img_path, 'rb'),
                 },
                 headers={'api-key': secret.openai_id}
-            )
+            ).json()["output_url"]
         except:
             return self.request_colorization_openai(img_path, tries=tries-1)
 
