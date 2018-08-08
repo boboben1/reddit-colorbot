@@ -59,13 +59,15 @@ class SuperRes(object):
         if tries == 0:
             raise Exception("An error has occurred")
         try:
-            return requests.post(
+            r = requests.post(
                 "https://api.deepai.org/api/torch-srgan",
                 files={
                     'image': open(img_path, 'rb'),
                 },
                 headers={'api-key': secret.openai_id}
-            ).json()["output_url"]
+            )
+            return r.json()["output_url"]
         except:
-            return self.request_colorization_openai(img_path, tries=tries-1)
+            print r.text
+            return self.request_superres_openai(img_path, tries=tries-1)
 
