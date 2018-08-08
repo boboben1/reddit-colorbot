@@ -74,7 +74,7 @@ class Colorizer(object):
         r = requests.post(
             "https://api.deepai.org/api/colorizer",
             files={
-                'image': open(png_path, 'rb'),
+                'image': open(str(png_path.resolve()), 'rb'),
             },
             headers={'api-key': secret.openai_id}
         )
