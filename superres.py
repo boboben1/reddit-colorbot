@@ -48,9 +48,8 @@ class SuperRes(object):
         im = Image.open(input_path)
         im.save(str(png_path))
 
-        r = self.request_superres_openai(str(png_path.resolve()))
+        output_url  = self.request_superres_openai(str(png_path.resolve()))
 
-        output_url = r.json()["output_url"]
 
         test = urllib.FancyURLopener()
         test.addheaders = [('User-Agent', None)]
@@ -66,7 +65,7 @@ class SuperRes(object):
                     'image': open(img_path, 'rb'),
                 },
                 headers={'api-key': secret.openai_id}
-            )
+            ).json()["output_url"]
         except:
             return self.request_colorization_openai(img_path, tries=tries-1)
 
