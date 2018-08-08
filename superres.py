@@ -56,6 +56,7 @@ class SuperRes(object):
         test.retrieve(output_url, output_path)
     
     def request_superres_openai(self, img_path, tries=3):
+        print img_path
         if tries == 0:
             raise Exception("An error has occurred")
         try:
