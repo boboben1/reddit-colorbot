@@ -46,9 +46,9 @@ class SuperRes(object):
         png_path = Path(input_path).with_suffix(".png")
 
         im = Image.open(input_path)
-        im.save(str(png_path.absolute()))
+        im.save(str(png_path))
 
-        output_url  = self.request_superres_openai(str(png_path.resolve()))
+        output_url  = self.request_superres_openai(str(png_path))
 
 
         test = urllib.FancyURLopener()
