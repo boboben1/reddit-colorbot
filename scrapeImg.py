@@ -60,13 +60,13 @@ def search_and_download_image(submission, new_user_agent):
     submission_url = submission.url
     parsed_uri = urlparse.urlparse(submission_url)
 
-    if parsed_uri.path.endswith(('.png', '.jpg', '.jpeg')):
+    if parsed_uri.path.endswith(('.png', '.jpg', '.jpeg', '.gif')):
         # this is u direct link
         return download_file(submission_url)
 
     if parsed_uri.netloc.endswith(".imgur.com") or parsed_uri.netloc == "imgur.com":
 
-        if parsed_uri.path.endswith(('.png', '.jpg', '.jpeg')):
+        if parsed_uri.path.endswith(('.png', '.jpg', '.jpeg', '.gif')):
             return download_file(extract_image_url_from_page(submission_url))
         if parsed_uri.path.startswith('/a/'):
             # album
