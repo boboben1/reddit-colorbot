@@ -1,6 +1,6 @@
 FROM ubuntu:artful
 
-ENV cache_breaker "2018-01-17"
+ENV cache_breaker "2018-01-17sr"
 
 ###########################
 ### from ubuntu ###########
