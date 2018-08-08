@@ -12,3 +12,4 @@ pysftp
 algorithmia
 pillow
 pathlib
+requests
