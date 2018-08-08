@@ -16,6 +16,10 @@ import shutil
 
 import os
 
+import requests
+
+import urllib
+
 class VideoStabilisingException(Exception):
     pass
 
@@ -31,7 +35,7 @@ class Colorizer(object):
         self.algo = self.client.algo('deeplearning/ColorfulImageColorization/1.1.13')
 
     def __call__(self, input_path, output_path):
-        return self.colorize_file(input_path, output_path)
+        return self.colorize_file_openai(input_path, output_path)
 
     # ####################### #
     # ## functions ########## #
@@ -59,3 +63,25 @@ class Colorizer(object):
         result_file.close()
 
         shutil.move(result_file_name, output_path)
+
+    def colorize_file_openai(self, input_path, output_path):
+
+        png_path = Path(input_path).with_suffix(".png")
+
+        im = Image.open(input_path)
+        ImageOps.grayscale(im).save(str(png_path.resolve()))
+
+        r = requests.post(
+            "https://api.deepai.org/api/colorizer",
+            files={
+                'image': open(png_path, 'rb'),
+            },
+            headers={'api-key': secret.openai_id}
+        )
+
+        output_url = r.json().output_url
+
+        test = urllib.FancyURLopener()
+        test.addheaders = [('User-Agent', None)]
+        test.retrieve(output_url, output_path)
+
