@@ -79,7 +79,7 @@ class Colorizer(object):
             headers={'api-key': secret.openai_id}
         )
 
-        output_url = r.json().output_url
+        output_url = r.json()["output_url"]
 
         test = urllib.FancyURLopener()
         test.addheaders = [('User-Agent', None)]
