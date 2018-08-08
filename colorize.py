@@ -71,17 +71,25 @@ class Colorizer(object):
         im = Image.open(input_path)
         ImageOps.grayscale(im).save(str(png_path.resolve()))
 
-        r = requests.post(
-            "https://api.deepai.org/api/colorizer",
-            files={
-                'image': open(str(png_path.resolve()), 'rb'),
-            },
-            headers={'api-key': secret.openai_id}
-        )
+        r = self.request_colorization_openai(str(png_path.resolve()))
 
         output_url = r.json()["output_url"]
 
         test = urllib.FancyURLopener()
         test.addheaders = [('User-Agent', None)]
         test.retrieve(output_url, output_path)
+    
+    def request_colorization_openai(self, img_path, tries=3):
+        if tries == 0:
+            raise Exception("An error has occurred")
+        try:
+            return requests.post(
+                "https://api.deepai.org/api/colorizer",
+                files={
+                    'image': open(img_path, 'rb'),
+                },
+                headers={'api-key': secret.openai_id}
+            )
+        except:
+            return self.request_colorization_openai(img_path, tries=tries-1)
 
