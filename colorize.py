@@ -8,7 +8,7 @@ import Algorithmia
 
 import secret
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 from pathlib import Path
 
@@ -42,9 +42,9 @@ class Colorizer(object):
 
         png_path = Path(input_path).with_suffix(".png")
 
-        if not input_path.endswith(".png"):
-            im = Image.open(input_path)
-            im.save(png_path)
+        #if not input_path.endswith(".png"):
+        im = Image.open(input_path)
+        ImageOps.grayscale(im).save(str(png_path.resolve()))
 
 
         self.client.file("data://.my/colorbot/uncolorized.png").putFile(str(png_path.resolve()))
