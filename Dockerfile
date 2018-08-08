@@ -41,6 +41,7 @@ COPY scrapeImg.py /bot
 COPY colorize.py /bot
 COPY imgUpload.py /bot
 COPY helper.py /bot
+COPY superres.py /bot
 
 ENV PYTHONUNBUFFERED 0
 CMD ["python", "bot.py"]
