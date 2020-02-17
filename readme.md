@@ -2,7 +2,7 @@
 
 a reddit bot, that colorizes photos
 
-**account on reddit:**: https://www.reddit.com/user/colorbot
+**account on reddit:**: https://www.reddit.com/user/coloringbot
 
 **Ranking**: https://goodbot-badbot.herokuapp.com/all_filter
 
